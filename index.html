@@ -3,50 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة أمل التعليمية</title>
+    <title>أمل</title>
+
+    <!-- إعدادات تحويل الموقع إلى تطبيق ويب تقدمي PWA على الآيفون بالاسم الجديد والأيقونة الفاخرة -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#1a252f">
+    <meta name="apple-mobile-web-app-title" content="أمل">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/?size=192&id=103366&format=png&color=2C3E50">
+
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
+            --primary-color: #1a252f;      /* أزرق داكن فاخر جداً */
+            --secondary-color: #d4af37;    /* لمسة ذهبية ملكية */
+            --accent-color: #34495e;       /* رمادي داكن متناسق */
             --success-color: #2ecc71;
             --danger-color: #e74c3c;
-            --warning-color: #f1c40f;
             --whatsapp-color: #25D366;
-            --light-bg: #f8f9fa;
+            --light-bg: #f5f7fa;
             --dark-text: #2c3e50;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0; padding: 0;
-            background-color: #eef2f7;
+            /* خلفية متدرجة أنيقة جداً ومريحة للعين */
+            background: linear-gradient(135deg, #f4f7f6 0%, #e2ebf0 100%);
             color: var(--dark-text);
         }
 
+        /* شاشة تسجيل الدخول بتصميم ملكي ساحر */
         .login-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #2c3e50, #3498db);
+            background: radial-gradient(circle at center, #2c3e50 0%, #1a252f 100%);
             display: flex; justify-content: center; align-items: center;
             z-index: 10000;
         }
 
         .login-box {
-            background: white; padding: 40px; border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
             text-align: center; max-width: 400px; width: 90%;
+            border-top: 5px solid var(--secondary-color);
+            backdrop-filter: blur(10px);
         }
 
+        .login-box h2 {
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        /* الهيدر الرئيسي للتطبيق */
         .header {
-            background-color: var(--primary-color);
-            color: white; padding: 20px; text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #1a252f, #2c3e50);
+            color: white; padding: 25px 20px; text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .teacher-badge-header {
-            background-color: #e67e22;
-            color: white; padding: 5px 15px; border-radius: 20px;
-            display: inline-block; font-size: 14px; margin-top: 5px;
+            background-color: var(--secondary-color);
+            color: var(--primary-color); padding: 6px 20px; border-radius: 20px;
+            display: inline-block; font-size: 14px; margin-top: 10px; font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .container {
@@ -59,90 +90,111 @@
 
         .tab-btn {
             padding: 12px 25px; font-size: 16px; font-weight: bold;
-            cursor: pointer; border: none; border-radius: 8px;
+            cursor: pointer; border: none; border-radius: 10px;
             background-color: white; color: var(--primary-color);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
         .tab-btn.active, .tab-btn:hover {
-            background-color: var(--secondary-color); color: white;
-            transform: translateY(-2px);
+            background-color: var(--primary-color); color: #fff;
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(26, 37, 47, 0.2);
         }
 
         .panel {
-            display: none; background: white; padding: 25px;
-            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: none; background: white; padding: 30px;
+            border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.02);
         }
 
         .panel.active { display: block; }
 
         h2 {
-            color: var(--primary-color); border-bottom: 2px solid #eee;
-            padding-bottom: 10px; margin-top: 0;
+            color: var(--primary-color); border-bottom: 2px solid #f1f3f5;
+            padding-bottom: 12px; margin-top: 0; font-weight: 700;
         }
 
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #4a5568; }
 
         input, select {
-            width: 100%; padding: 10px; border: 1px solid #ccc;
-            border-radius: 6px; box-sizing: border-box; font-size: 14px;
+            width: 100%; padding: 12px; border: 1px solid #cbd5e1;
+            border-radius: 8px; box-sizing: border-box; font-size: 15px;
+            transition: all 0.2s; background-color: #f8fafc;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 37, 47, 0.1);
         }
 
         .date-picker-box {
-            background: #e8f4fd; padding: 15px; border-radius: 8px;
-            margin-bottom: 20px; border-right: 5px solid var(--secondary-color);
+            background: #f0f4f8; padding: 15px; border-radius: 10px;
+            margin-bottom: 25px; border-right: 5px solid var(--primary-color);
         }
 
         button.btn-submit {
             background-color: var(--success-color); color: white;
-            border: none; padding: 12px 20px; border-radius: 6px;
+            border: none; padding: 14px 20px; border-radius: 8px;
             cursor: pointer; font-size: 16px; font-weight: bold;
-            width: 100%; transition: background 0.2s;
+            width: 100%; transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
         }
-        button.btn-submit:hover { background-color: #27ae60; }
+        button.btn-submit:hover { 
+            background-color: #27ae60; 
+            transform: translateY(-1px);
+        }
 
         .stats-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px; margin-bottom: 25px;
+            gap: 20px; margin-bottom: 30px;
         }
 
         .stat-card {
-            background: #f8f9fa; padding: 20px; border-radius: 8px;
-            text-align: center; border-right: 5px solid var(--secondary-color);
+            background: #fff; padding: 25px; border-radius: 12px;
+            text-align: center; border-top: 4px solid var(--primary-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
         }
-        .stat-card.success { border-right-color: var(--success-color); }
-        .stat-card.danger { border-right-color: var(--danger-color); }
+        .stat-card.success { border-top-color: var(--success-color); }
+        .stat-card.danger { border-top-color: var(--danger-color); }
 
-        .stat-number { font-size: 24px; font-weight: bold; margin-top: 5px; }
+        .stat-number { font-size: 26px; font-weight: 800; margin-top: 8px; color: #1e293b; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; vertical-align: middle; }
-        th { background-color: #f4f6f9; color: var(--primary-color); }
+        table { width: 100%; border-collapse: collapse; margin-top: 25px; }
+        th, td { padding: 14px; text-align: right; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        th { background-color: #f8fafc; color: var(--primary-color); font-weight: 700; }
 
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .status-badge { padding: 5px 10px; border-radius: 6px; font-size: 13px; font-weight: bold; }
         .status-present { background-color: #d4edda; color: #155724; }
         .status-absent { background-color: #f8d7da; color: #721c24; }
         .status-none { background-color: #e2e3e5; color: #383d41; }
 
-        .btn-action { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: bold; }
+        .btn-action { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; margin-left: 5px; font-weight: bold; transition: all 0.2s; }
         .btn-p { background-color: var(--success-color); color: white; }
         .btn-a { background-color: var(--danger-color); color: white; }
-        .btn-del { background-color: #7f8c8d; color: white; }
-        .btn-wa { background-color: var(--whatsapp-color); color: white; display: inline-flex; align-items: center; gap: 5px; }
-        .btn-wa:hover { background-color: #1ebe57; }
+        .btn-del { background-color: #94a3b8; color: white; }
+        .btn-wa { background-color: var(--whatsapp-color); color: white; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(37,211,102,0.2); }
+        .btn-wa:hover { background-color: #1ebe57; transform: translateY(-1px); }
+        .btn-action:hover { opacity: 0.9; }
 
         .loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8); display: flex; justify-content: center;
+            background: rgba(255,255,255,0.85); display: flex; justify-content: center;
             align-items: center; font-size: 20px; font-weight: bold; color: var(--primary-color);
-            z-index: 9999;
+            z-index: 9999; backdrop-filter: blur(5px);
         }
 
         .logout-btn {
-            background-color: var(--danger-color); color: white; border: none;
-            padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;
-            float: left; margin-top: -45px; margin-left: 20px;
+            background-color: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;
+            float: left; margin-top: -5px; transition: all 0.2s;
+        }
+        .logout-btn:hover {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
         }
     </style>
 </head>
@@ -151,39 +203,39 @@
     <!-- شاشة تسجيل الدخول بالرموز السرية للمدرسين والمدير -->
     <div id="login-panel" class="login-screen">
         <div class="login-box">
-            <h2 style="border:none; margin-bottom: 10px;">منصة أمل التعليمية</h2>
-            <p style="color: #666; margin-bottom: 20px;">الرجاء إدخال رمز الدخول المخصص لك</p>
-            <input type="password" id="secret-pin" placeholder="أدخل الرمز السري هنا" style="text-align: center; font-size: 18px; margin-bottom: 20px;"><br><br>
-            <button class="btn-submit" onclick="verifyAccess()">تسجيل الدخول الآمن</button>
+            <h2>تطبيق أمل</h2>
+            <p style="color: #64748b; margin-bottom: 25px; font-size: 15px;">الرجاء إدخال رمز الدخول المخصص لك</p>
+            <input type="password" id="secret-pin" placeholder="أدخل الرمز السري هنا" style="text-align: center; font-size: 20px; margin-bottom: 25px; border-radius: 12px;"><br><br>
+            <button class="btn-submit" style="background-color: var(--primary-color); box-shadow: 0 4px 10px rgba(26,37,47,0.3);" onclick="verifyAccess()">تسجيل الدخول الآمن</button>
         </div>
     </div>
 
-    <div id="loading" class="loading-overlay" style="display: none;">جاري الاتصال بالسحابة...</div>
+    <div id="loading" class="loading-overlay" style="display: none;">جاري الاتصال بالسحابة الآمنة...</div>
 
     <!-- الواجهة الرئيسية للموقع -->
     <div id="main-content" style="display: none;">
         <div class="header">
             <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
-            <h1>منصة أمل التعليمية</h1>
-            <p id="user-welcome-msg">لوحة التحكم الموحدة لإدارة التعليم الذكي</p>
+            <h1>أمل</h1>
+            <p id="user-welcome-msg" style="margin: 8px 0 0 0; color: #cbd5e1; font-size: 15px;">منظومة إدارة التعليم الذكي الموحدة</p>
             <div id="teacher-tag" class="teacher-badge-header" style="display: none;">حساب مدرس مخصص</div>
         </div>
 
         <div class="container">
-            <!-- شريط التبديل يظهر الآن للجميع (المدراء والأساتذة على حد سواء) -->
+            <!-- شريط الأقسام الموحد بلمسة أنيقة -->
             <div class="tabs" id="main-tabs">
                 <button class="tab-btn active" onclick="switchTab('students-panel')">إدارة الطلاب</button>
-                <button class="tab-btn" onclick="switchTab('attendance-panel')">تسجيل الغياب اليومي والواتساب</button>
+                <button class="tab-btn" onclick="switchTab('attendance-panel')">تسجيل الغياب والواتساب</button>
                 <button class="tab-btn" onclick="switchTab('finance-panel')">الخزينة والحسابات</button>
             </div>
 
-            <!-- 1. لوحة إدارة الطلاب (مفتوحة للجميع) -->
+            <!-- 1. لوحة إدارة الطلاب -->
             <div id="students-panel" class="panel active">
-                <h2>تسجيل طالب جديد في المنصة</h2>
+                <h2>تسجيل طالب جديد في التطبيق</h2>
                 <form id="student-form" onsubmit="addStudent(event)">
                     <div class="form-group">
                         <label>اسم الطالب الكامل:</label>
-                        <input type="text" id="st-name" required placeholder="مثال: أحمد علي">
+                        <input type="text" id="st-name" required placeholder="مثال: محمد علي">
                     </div>
                     <div class="form-group">
                         <label>المرحلة الدراسية / الصف:</label>
@@ -207,7 +259,7 @@
                     <button type="submit" class="btn-submit">حفظ بيانات الطالب سحابياً</button>
                 </form>
 
-                <h2>قائمة الطلاب المسجلين بالمنصة</h2>
+                <h2>قائمة الطلاب المسجلين</h2>
                 <div style="overflow-x: auto;">
                     <table>
                         <thead>
@@ -226,11 +278,11 @@
                 </div>
             </div>
 
-            <!-- 2. لوحة الغياب والتحضير (مفتوحة للجميع) -->
+            <!-- 2. لوحة الغياب والتحضير -->
             <div id="attendance-panel" class="panel">
                 <div class="date-picker-box">
                     <label style="color: var(--primary-color); font-size: 16px;">اختر تاريخ اليوم المراد رصده أو مراجعته:</label>
-                    <input type="date" id="attendance-date" style="max-width: 250px; font-weight: bold; color: var(--secondary-color);" onchange="loadAttendanceForDate()">
+                    <input type="date" id="attendance-date" style="max-width: 250px; font-weight: bold; color: var(--primary-color);" onchange="loadAttendanceForDate()">
                 </div>
 
                 <h2 id="attendance-title">رصد الحضور وإشعارات أولياء الأمور</h2>
@@ -250,7 +302,7 @@
                 </div>
             </div>
 
-            <!-- 3. لوحة الحسابات والمالية (مفتوحة ومفعلة للجميع) -->
+            <!-- 3. لوحة الحسابات والمالية -->
             <div id="finance-panel" class="panel">
                 <h2>التقرير المالي العام</h2>
                 <div class="stats-grid">
@@ -280,7 +332,7 @@
                         <label>المبلغ المراد تسديده الآن (د.ع):</label>
                         <input type="number" id="pay-amount" required placeholder="مثال: 50000">
                     </div>
-                    <button type="submit" class="btn-submit" style="background-color: var(--secondary-color);">تأكيد وتحديث دفعة الحساب</button>
+                    <button type="submit" class="btn-submit" style="background-color: var(--primary-color); box-shadow: 0 4px 6px rgba(26,37,47,0.2);">تأكيد وتحديث دفعة الحساب</button>
                 </form>
             </div>
         </div>
@@ -332,17 +384,15 @@
                 document.getElementById('login-panel').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
 
-                // الترحيب المخصص حسب نوع الحساب
                 if (currentUserRole === "admin") {
                     document.getElementById('teacher-tag').style.display = 'none';
-                    document.getElementById('user-welcome-msg').innerText = `مرحباً بك في لوحة التحكم الكاملة لـ: ${user.name} 👑`;
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً بك في لوحة تحكم تطبيق: ${user.name} 👑`;
                 } else {
                     document.getElementById('teacher-tag').style.display = 'inline-block';
                     document.getElementById('teacher-tag').innerText = `المدرس: ${user.name}`;
-                    document.getElementById('user-welcome-msg').innerText = `مرحباً أستاذ، لديك الآن كامل الصلاحيات لإضافة طلابك وإدارتهم مالياً.`;
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً أستاذ، لديك كامل الصلاحيات لإدارة طلابك وماليتهم بمرونة.`;
                 }
 
-                // فتح الشاشة الافتراضية للجميع (إدارة الطلاب)
                 switchTab('students-panel');
                 startRealtimeSync();
             } else {
@@ -437,9 +487,9 @@
 
             let message = "";
             if (status === "حاضر") {
-                message = `تحية طيبة من إدارة منصة أَمَل التعليمية.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المحاضرة المقررة لتاريخ ${selectedDate} وتلقى دروسه بانتظام.\n\nنتمنى له التوفيق والنجاح الدائم.`;
+                message = `تحية طيبة من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المحاضرة المقررة لتاريخ ${selectedDate} وتلقى دروسه بانتظام.\n\nنتمنى له التوفيق والنجاح الدائم.`;
             } else if (status === "غائب") {
-                message = `تنبيه هام من إدارة منصة أَمَل التعليمية.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرات المقررة لهذا اليوم ${selectedDate}.\n\nيرجى التواصل مع المدرس لتوضيح سبب الغياب لضمان عدم تأخره في المادة.`;
+                message = `تنبيه هام من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرات المقررة لهذا اليوم ${selectedDate}.\n\nيرجى التواصل مع المدرس لتوضيح سبب الغياب لضمان عدم تأخره في المادة.`;
             }
 
             const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
@@ -496,7 +546,6 @@
             let totalCollected = 0;
 
             localStudents.forEach(student => {
-                // فلترة العرض: إذا كان الحساب أستاذ، يرى فقط طلاب مرحلته في القوائم والتقارير المالية والغيابات
                 if (currentUserRole !== "admin" && student.grade !== targetGrade) {
                     return; 
                 }
@@ -542,7 +591,6 @@
                 }
             });
 
-            // تحديث البطاقات المالية بناءً على الطلاب المفلترين للمدرس أو المالك الكلي
             document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
             document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
             document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
