@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أمل</title>
+    <title>أمل - منظومة إدارة التعليم الذكي</title>
+
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="#1a252f">
@@ -11,87 +12,678 @@
     <link rel="apple-touch-icon" href="https://img.icons8.com/?size=192&id=103366&format=png&color=2C3E50">
 
     <style>
-        :root { --primary-color: #1a252f; --secondary-color: #d4af37; --success-color: #2ecc71; --danger-color: #e74c3c; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f5f7fa; color: #2c3e50; }
-
-        /* شاشة تسجيل الدخول */
-        .login-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://i.ibb.co/6RFF2X6v/image-33.png') no-repeat center center;
-            background-size: cover; display: flex; justify-content: center; align-items: center; z-index: 10000;
+        :root {
+            --primary-color: #2c3e50;      
+            --secondary-color: #d4af37;    
+            --accent-color: #4a6b82;       
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --whatsapp-color: #25D366;
+            --light-bg: #f5f7fa;
+            --dark-text: #2c3e50;
+            /* التدرج اللوني المستوحى تماماً من صورتك المرفقة */
+            --amal-gradient: linear-gradient(135deg, #bfe3ed 0%, #ecdcd1 100%);
         }
-        .login-box { background: rgba(255, 255, 255, 0.9); padding: 40px; border-radius: 24px; text-align: center; width: 90%; max-width: 350px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
 
-        /* الواجهة الداخلية الأصلية */
-        #main-content { display: none; padding: 20px; }
-        .header { background: linear-gradient(135deg, #1a252f, #2c3e50); color: white; padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 20px; }
-        .panel { display: none; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            background: var(--amal-gradient);
+            background-attachment: fixed;
+            color: var(--dark-text);
+        }
+
+        /* شاشة تسجيل الدخول بالخلفية الانسيابية المأخوذة من الصورة */
+        .login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--amal-gradient);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* صندوق تسجيل دخول شفاف لإبراز جمالية الهوية */
+        .login-box {
+            background: rgba(255, 255, 255, 0.75); 
+            padding: 30px 20px; 
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            text-align: center; 
+            max-width: 100%; 
+            width: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* محاكاة الشعار داخل صندوق الدخول */
+        .login-logo-sim {
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 10px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #4a6b82, #2c3e50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-box h2 {
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+        }
+
+        /* الهيدر الرئيسي للتطبيق */
+        .header {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--primary-color); 
+            padding: 20px 15px; 
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-bottom: 2px solid rgba(255,255,255,0.4);
+            position: relative;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+
+        .teacher-badge-header {
+            background-color: var(--primary-color);
+            color: #fff; 
+            padding: 6px 16px; 
+            border-radius: 20px;
+            display: inline-block; 
+            font-size: 13px; 
+            margin-top: 10px; 
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1200px; 
+            margin: 15px auto; 
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+
+        /* التبويبات متجاوبة لشاشات الموبايل */
+        .tabs {
+            display: flex; 
+            justify-content: space-between; 
+            gap: 8px; 
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px; 
+            font-size: 13px; 
+            font-weight: bold;
+            cursor: pointer; 
+            border: none; 
+            border-radius: 12px;
+            background-color: rgba(255,255,255,0.7); 
+            color: var(--primary-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02); 
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background-color: var(--primary-color); 
+            color: #fff;
+            transform: translateY(-2px);
+        } 
+        
+        .panel {
+            display: none; 
+            background: rgba(255, 255, 255, 0.85); 
+            padding: 20px;
+            border-radius: 20px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
         .panel.active { display: block; }
-        button { padding: 10px 20px; cursor: pointer; border-radius: 8px; border: none; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: right; }
+
+        h2 {
+            color: var(--primary-color); 
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding-bottom: 10px; 
+            margin-top: 0; 
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: #4a5568; font-size: 14px; }
+
+        input, select {
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #cbd5e1;
+            border-radius: 10px; 
+            box-sizing: border-box; 
+            font-size: 14px;
+            transition: all 0.2s; 
+            background-color: rgba(255,255,255,0.9);
+        }
+        input:focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+        }
+
+        .date-picker-box {
+            background: rgba(255,255,255,0.6); 
+            padding: 15px; 
+            border-radius: 12px;
+            margin-bottom: 20px; 
+            border-right: 5px solid var(--primary-color);
+        }
+
+        button.btn-submit {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); 
+            color: white;
+            border: none; 
+            padding: 14px 20px; 
+            border-radius: 10px;
+            cursor: pointer; 
+            font-size: 15px; 
+            font-weight: bold;
+            width: 100%; 
+            transition: all 0.2s;
+        }
+
+        /* شبكة الحسابات مرنة وتتحول لعمود واحد في الموبايل */
+        .stats-grid {
+            display: grid; 
+            grid-template-columns: 1fr;
+            gap: 12px; 
+            margin-bottom: 20px;
+        }
+        @media(min-width: 600px) {
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .stat-card {
+            background: #fff; 
+            padding: 15px; 
+            border-radius: 14px;
+            text-align: center; 
+            border-top: 4px solid var(--primary-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.01);
+            font-size: 14px;
+        }
+        .stat-card.success { border-top-color: var(--success-color); }
+        .stat-card.danger { border-top-color: var(--danger-color); }
+        .stat-number { font-size: 20px; font-weight: 800; margin-top: 6px; color: #1e293b; }
+
+        /* جعل الجداول قابلة للتمرير الأفقي بسلاسة على الهواتف */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 15px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.02);
+        }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; background: #fff;}
+        th, td { padding: 12px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        th { background-color: #f8fafc; color: var(--primary-color); font-weight: 700; }
+
+        .status-badge { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; display: inline-block;}
+        .status-present { background-color: #d4edda; color: #155724; }
+        .status-absent { background-color: #f8d7da; color: #721c24; }
+        .status-none { background-color: #e2e3e5; color: #383d41; }
+
+        .btn-action { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; transition: all 0.2s; margin: 2px;}
+        .btn-p { background-color: var(--success-color); color: white; }
+        .btn-a { background-color: var(--danger-color); color: white; }
+        .btn-del { background-color: #94a3b8; color: white; }
+        .btn-wa { background-color: var(--whatsapp-color); color: white; display: inline-flex; align-items: center; gap: 4px; }
+        
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); display: flex; justify-content: center;
+            align-items: center; font-size: 18px; font-weight: bold; color: var(--primary-color);
+            z-index: 9999; backdrop-filter: blur(5px);
+        } 
+        
+        .logout-btn {
+            background-color: var(--danger-color); 
+            color: white; 
+            border: none;
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: bold;
+            font-size: 12px;
+            position: absolute;
+            left: 15px;
+            top: 22px;
+        }
     </style>
 </head>
 <body>
 
     <div id="login-panel" class="login-screen">
         <div class="login-box">
-            <h2>تطبيق أمل</h2>
-            <input type="password" id="secret-pin" placeholder="الرمز السري">
-            <button onclick="verifyAccess()" style="background: #1a252f; color: white; width: 100%; margin-top: 15px;">دخول</button>
+            <div class="login-logo-sim">أمل</div>
+            <h2>منظومة إدارة التعليم الذكي</h2>
+            <p style="color: #64748b; margin-bottom: 20px; font-size: 13px; font-weight: 500;">يرجى كتابة رمز الوصول المخصص لك</p>
+            <input type="password" id="secret-pin" placeholder="الرمز السري الخاص بك" style="text-align: center; font-size: 18px; margin-bottom: 15px;"><br>
+            <button class="btn-submit" onclick="verifyAccess()">تسجيل الدخول الآمن</button>
         </div>
     </div>
 
-    <div id="main-content">
-        <div class="header"><h1>أمل</h1></div>
-        <div id="tabs" style="text-align: center; margin-bottom: 20px;">
-            <button onclick="switchTab('students-panel')">الطلاب</button>
-            <button onclick="switchTab('attendance-panel')">الغياب</button>
-        </div>
-        
-        <div id="students-panel" class="panel active">
-            <h2>إدارة الطلاب</h2>
-            <input type="text" id="st-name" placeholder="اسم الطالب">
-            <button onclick="addStudent()">إضافة</button>
-            <table id="students-table"></table>
+    <div id="loading" class="loading-overlay" style="display: none;">جاري الاتصال بالسحابة الآمنة...</div>
+
+    <div id="main-content" style="display: none;">
+        <div class="header">
+            <button class="logout-btn" onclick="logout()">خروج</button>
+            <h1>أمل</h1>
+            <p id="user-welcome-msg" style="margin: 5px 0 0 0; color: #555; font-size: 13px;">منظومة إدارة التعليم الذكي الموحدة</p>
+            <div id="teacher-tag" class="teacher-badge-header" style="display: none;"></div>
         </div>
 
-        <div id="attendance-panel" class="panel">
-            <h2>سجل الحضور</h2>
+        <div class="container">
+            <div class="tabs" id="main-tabs">
+                <button class="tab-btn active" onclick="switchTab('students-panel')">إدارة الطلاب</button>
+                <button class="tab-btn" onclick="switchTab('attendance-panel')">الغياب والواتساب</button>
+                <button class="tab-btn" onclick="switchTab('finance-panel')">الخزينة والحسابات</button>
+            </div>
+
+            <div id="students-panel" class="panel active">
+                <h2>تسجيل طالب جديد في التطبيق</h2>
+                <form id="student-form" onsubmit="addStudent(event)">
+                    <div class="form-group">
+                        <label>اسم الطالب الكامل:</label>
+                        <input type="text" id="st-name" required placeholder="مثال: محمد علي">
+                    </div>
+                    <div class="form-group">
+                        <label>المرحلة الدراسية / الصف:</label>
+                        <select id="st-grade" required>
+                            <option value="السادس العلمي">السادس العلمي (الخاصة بالأستاذ قاسم محمد)</option>
+                            <option value="الثالث متوسط">الثالث متوسط (باقي الحسابات الافتراضية)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>رقم هاتف ولي الأمر (واتساب):</label>
+                        <input type="text" id="st-phone" required placeholder="مثال: 077xxxxxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label>مبلغ القسط الكلي (د.ع):</label>
+                        <input type="number" id="st-total-fee" required placeholder="مثال: 500000">
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ المدفوع مقدماً (د.ع):</label>
+                        <input type="number" id="st-paid-fee" value="0" required>
+                    </div>
+                    <button type="submit" class="btn-submit">حفظ بيانات الطالب سحابياً</button>
+                </form> 
+                
+                <h2 style="margin-top: 25px;">قائمة الطلاب المسجلين</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الصف</th>
+                                <th>الهاتف</th>
+                                <th>القسط الكلي</th>
+                                <th>المدفوع</th>
+                                <th>المتبقي</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="attendance-panel" class="panel">
+                <div class="date-picker-box">
+                    <label style="color: var(--primary-color); font-size: 14px; margin-bottom:8px;">اختر تاريخ اليوم المراد رصده:</label>
+                    <input type="date" id="attendance-date" style="max-width: 100%; font-weight: bold;" onchange="loadAttendanceForDate()">
+                </div>
+
+                <h2 id="attendance-title">رصد الحضور وإشعارات أولياء الأمور</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الطالب</th>
+                                <th>الصف</th>
+                                <th>الحالة</th>
+                                <th>رصد الحالة</th>
+                                <th>إشعار فوري</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="finance-panel" class="panel">
+                <h2>التقرير المالي العام</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div>الإيرادات المتوقعة</div>
+                        <div class="stat-number" id="fin-total-expected">0 د.ع</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div>المبالغ المستلمة (الخزينة)</div>
+                        <div class="stat-number" id="fin-total-collected">0 د.ع</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div>الديون المتبقية</div>
+                        <div class="stat-number" id="fin-total-remaining">0 د.ع</div>
+                    </div>
+                </div>
+
+                <h2>تسديد قسط جديد</h2>
+                <form id="payment-form" onsubmit="collectPayment(event)">
+                    <div class="form-group">
+                        <label>اختر الطالب:</label>
+                        <select id="pay-student-select" required>
+                            <option value="">-- اختر من الطلاب المسجلين --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ المراد تسديده الآن (د.ع):</label>
+                        <input type="number" id="pay-amount" required placeholder="مثال: 50000">
+                    </div>
+                    <button type="submit" class="btn-submit">تأكيد وتحديث دفعة الحساب</button>
+                </form>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const db = getFirestore(initializeApp({
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot, setDoc, getDoc } 
+        from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; 
+        
+        const firebaseConfig = {
             apiKey: "AIzaSyDXjoZiN7LeNCtvQlMyDHSopHDGrVnpIxY",
-            projectId: "success-institute-4c8e4"
-        }));
+            authDomain: "success-institute-4c8e4.firebaseapp.com",
+            projectId: "success-institute-4c8e4",
+            storageBucket: "success-institute-4c8e4.firebasestorage.app",
+            messagingSenderId: "704801983840",
+            appId: "1:704801983840:web:d80c8e4a56c013f7daa205",
+            measurementId: "G-NLZT9F3HGZ"
+        };
 
-        window.verifyAccess = () => {
-            if(document.getElementById('secret-pin').value === "1234") {
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let localStudents = [];
+        let currentDayAttendance = {}; 
+        
+        let currentUserRole = "guest"; 
+        let targetGrade = "all";       
+
+        const usersDatabase = {
+            "1234": { name: "المصمم العام", role: "admin", grade: "all" },
+            "Qasim901": { name: "الأستاذ قاسم محمد", role: "teacher", grade: "السادس العلمي" },
+            "2023": { name: "الست زينة (افتراضي)", role: "teacher", grade: "الثالث متوسط" }
+        };
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('attendance-date').value = today;
+
+        window.verifyAccess = function() {
+            const pin = document.getElementById('secret-pin').value.trim();
+            
+            if (usersDatabase[pin]) {
+                const user = usersDatabase[pin];
+                currentUserRole = user.role;
+                targetGrade = user.grade;
+
                 document.getElementById('login-panel').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
-            } else { alert("رمز خطأ"); }
+
+                // تصحيح أخطاء الـ Template Literals باستخدام علامات الباك تيك (``)
+                if (currentUserRole === "admin") {
+                    document.getElementById('teacher-tag').style.display = 'none';
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً بك في لوحة تحكم تطبيق: ${user.name} 👑`;
+                } else {
+                    document.getElementById('teacher-tag').style.display = 'inline-block';
+                    document.getElementById('teacher-tag').innerText = `المدرس: ${user.name}`;
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً أستاذ، لديك كامل الصلاحيات لإدارة طلابك وماليتهم بمرونة.`;
+                }
+
+                switchTab('students-panel');
+                startRealtimeSync();
+            } else {
+                alert("الرمز السري غير صحيح!");
+            }
         }
 
-        window.switchTab = (id) => {
-            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+        window.logout = function() {
+            document.getElementById('secret-pin').value = "";
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('login-panel').style.display = 'flex';
         }
 
-        window.addStudent = async () => {
+        function startRealtimeSync() {
+            onSnapshot(collection(db, "students"), (snapshot) => {
+                localStudents = [];
+                snapshot.forEach((doc) => {
+                    localStudents.push({ id: doc.id, ...doc.data() });
+                });
+                loadAttendanceForDate(); 
+            });
+        }
+
+        window.loadAttendanceForDate = async function() {
+            const selectedDate = document.getElementById('attendance-date').value;
+            if(!selectedDate) return;
+
+            try {
+                const dateDocRef = doc(db, "attendance", selectedDate);
+                const dateDocSnap = await getDoc(dateDocRef);
+                
+                if (dateDocSnap.exists()) {
+                    currentDayAttendance = dateDocSnap.data();
+                } else {
+                    currentDayAttendance = {}; 
+                }
+                renderAll();
+            } catch(e) {
+                console.error("Error loading attendance data: ", e);
+            }
+        } 
+        
+        window.addStudent = async function(e) {
+            e.preventDefault();
             const name = document.getElementById('st-name').value;
-            await addDoc(collection(db, "students"), { name });
+            const grade = document.getElementById('st-grade').value;
+            const phone = document.getElementById('st-phone').value;
+            const totalFee = Number(document.getElementById('st-total-fee').value);
+            const paidFee = Number(document.getElementById('st-paid-fee').value);
+
+            try {
+                document.getElementById('loading').style.display = 'flex';
+                await addDoc(collection(db, "students"), {
+                    name: name, grade: grade, phone: phone,
+                    totalFee: totalFee, paidFee: paidFee
+                });
+                document.getElementById('student-form').reset();
+            } catch (error) {
+                alert("خطأ في السيرفر: " + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
         }
 
-        onSnapshot(collection(db, "students"), (snap) => {
-            const table = document.getElementById('students-table');
-            table.innerHTML = "<tr><th>الاسم</th></tr>";
-            snap.forEach(d => table.innerHTML += `<tr><td>${d.data().name}</td></tr>`);
-        });
+        window.markAttendance = async function(studentId, status) {
+            const selectedDate = document.getElementById('attendance-date').value;
+            currentDayAttendance[studentId] = status;
+
+            try {
+                await setDoc(doc(db, "attendance", selectedDate), currentDayAttendance);
+                renderAll();
+            } catch (error) {
+                alert("فشل الحفظ السحابي: " + error.message);
+            }
+        }
+
+        window.sendWhatsAppNotice = function(studentId) {
+            const student = localStudents.find(s => s.id === studentId);
+            const selectedDate = document.getElementById('attendance-date').value;
+            // تصحيح خطأ العبارة الشرطية المفقودة علامتها ||
+            const status = currentDayAttendance[studentId] || "غير مرصود بعد";
+
+            if (!student) return;
+            if (status === "غير مرصود بعد") {
+                alert("يرجى رصد حالة الطالب أولاً!");
+                return;
+            }
+
+            let formattedPhone = student.phone.trim();
+            if (formattedPhone.startsWith('0')) {
+                formattedPhone = '964' + formattedPhone.substring(1);
+            }
+
+            let message = "";
+            if (status === "حاضر") {
+                message = `تحية طيبة من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المحاضرة المقررة لتاريخ ${selectedDate}.\n\nنتمنى له التوفيق والنجاح الدائم.`;
+            } else if (status === "غائب") {
+                message = `تنبيه هام من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرات المقررة لهذا اليوم ${selectedDate}.\n\nيرجى التواصل مع المدرس لتوضيح سبب الغياب.`;
+            }
+
+            const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        window.collectPayment = async function(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('pay-student-select').value;
+            const amount = Number(document.getElementById('pay-amount').value);
+
+            if(!studentId) return;
+
+            const student = localStudents.find(s => s.id === studentId);
+            if(student) {
+                const newPaid = student.paidFee + amount;
+                if(newPaid > student.totalFee) {
+                    alert("خطأ: المبلغ المدفوع الكلي سيتجاوز القسط الأصلي!");
+                    return;
+                }
+
+                try {
+                    document.getElementById('loading').style.display = 'flex';
+                    await updateDoc(doc(db, "students", studentId), { paidFee: newPaid });
+                    document.getElementById('payment-form').reset();
+                } catch (error) {
+                    alert("فشل التحديث المالي: " + error.message);
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                }
+            }
+        }
+
+        window.deleteStudent = async function(id) {
+            if(confirm("هل أنت متأكد من حذف هذا الطالب نهائياً من السيرفر؟")) {
+                try {
+                    await deleteDoc(doc(db, "students", id));
+                } catch (error) {
+                    alert("فشل الحذف: " + error.message);
+                }
+            }
+        }
+
+        function renderAll() {
+            const tableBody = document.getElementById('students-table-body');
+            const attendBody = document.getElementById('attendance-table-body');
+            const selectMenu = document.getElementById('pay-student-select');
+
+            if(tableBody) tableBody.innerHTML = '';
+            if(attendBody) attendBody.innerHTML = '';
+            if(selectMenu) selectMenu.innerHTML = '<option value="">-- اختر من الطلاب المسجلين --</option>';
+
+            let totalExpected = 0;
+            let totalCollected = 0;
+
+            localStudents.forEach(student => {
+                if (currentUserRole !== "admin" && student.grade !== targetGrade) {
+                    return; 
+                }
+
+                const remaining = student.totalFee - student.paidFee;
+                totalExpected += student.totalFee;
+                totalCollected += student.paidFee;
+
+                if(tableBody) {
+                    tableBody.innerHTML += `<tr>
+                        <td><strong>${student.name}</strong></td>
+                        <td>${student.grade}</td>
+                        <td><span style="color:#555; font-family:monospace;">${student.phone}</span></td>
+                        <td>${student.totalFee.toLocaleString()} د.ع</td>
+                        <td>${student.paidFee.toLocaleString()} د.ع</td>
+                        <td style="color: ${remaining > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">${remaining.toLocaleString()} د.ع</td>
+                        <td><button class="btn-action btn-del" onclick="deleteStudent('${student.id}')">حذف</button></td>
+                    </tr>`;
+                }
+
+                // تصحيح خطأ العبارة الشرطية المفقودة علامتها ||
+                const currentStatus = currentDayAttendance[student.id] || "غير مرصود بعد";
+                let badgeClass = 'status-none';
+                if(currentStatus === 'حاضر') badgeClass = 'status-present';
+                if(currentStatus === 'غائب') badgeClass = 'status-absent';
+
+                if(attendBody) {
+                    attendBody.innerHTML += `<tr>
+                        <td><strong>${student.name}</strong></td>
+                        <td>${student.grade}</td>
+                        <td><span class="status-badge ${badgeClass}">${currentStatus}</span></td>
+                        <td>
+                            <button class="btn-action btn-p" onclick="markAttendance('${student.id}', 'حاضر')">حاضر</button>
+                            <button class="btn-action btn-a" onclick="markAttendance('${student.id}', 'غائب')">غائب</button>
+                        </td>
+                        <td>
+                            <button class="btn-action btn-wa" onclick="sendWhatsAppNotice('${student.id}')">
+                               💬 واتساب
+                            </button>
+                        </td>
+                    </tr>`;
+                }
+
+                if(selectMenu) {
+                    // تصحيح علامات التنصيص إلى باك تيك لتحقيق الدمج البرمجي الصحيح للـ Template strings
+                    selectMenu.innerHTML += `<option value="${student.id}">${student.name} (المتبقي: ${remaining.toLocaleString()} د.ع)</option>`;
+                }
+            });
+
+            document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
+            document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
+            document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
+        }
+    </script>
+
+    <script>
+        function switchTab(panelId) {
+            document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
     </script>
 </body>
 </html>
