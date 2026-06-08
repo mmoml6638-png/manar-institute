@@ -1,0 +1,604 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة منار - إدارة المعهد التعليمي</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f1c40f;
+            --whatsapp-color: #25D366;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eef2f7;
+            color: var(--dark-text);
+        }
+
+        /* شاشة تسجيل الدخول */
+        .login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background-color: white;
+            color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .panel {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .date-picker-box {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-right: 5px solid var(--secondary-color);
+        }
+
+        button.btn-submit {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        button.btn-submit:hover { background-color: #27ae60; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border-right: 5px solid var(--secondary-color);
+        }
+
+        .stat-card.success { border-right-color: var(--success-color); }
+        .stat-card.danger { border-right-color: var(--danger-color); }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        th { background-color: #f4f6f9; color: var(--primary-color); }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-present { background-color: #d4edda; color: #155724; }
+        .status-absent { background-color: #f8d7da; color: #721c24; }
+        .status-none { background-color: #e2e3e5; color: #383d41; }
+
+        .btn-action {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        .btn-p { background-color: var(--success-color); color: white; }
+        .btn-a { background-color: var(--danger-color); color: white; }
+        .btn-del { background-color: #7f8c8d; color: white; }
+        .btn-wa { background-color: var(--whatsapp-color); color: white; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-wa:hover { background-color: #1ebe57; }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px; font-weight: bold; color: var(--primary-color);
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- بوابات الدخول والتحميل السحابي -->
+    <div id="login-panel" class="login-screen">
+        <div class="login-box">
+            <h2 style="border:none; margin-bottom: 20px;">منصة مَنَار التعليمية</h2>
+            <p style="color: #666; margin-bottom: 20px;">الرجاء إدخال رمز الوصول الآمن للمعهد</p>
+            <input type="password" id="secret-pin" placeholder="أدخل رمز الدخول الخاص بك" style="text-align: center; font-size: 18px; margin-bottom: 20px;"><br><br>
+            <button class="btn-submit" onclick="verifyAccess()">فتح لوحة الإدارة</button>
+        </div>
+    </div>
+
+    <div id="loading" class="loading-overlay" style="display: none;">جاري الاتصال بالسحابة...</div>
+
+    <!-- المحتوى الرئيسي للموقع -->
+    <div id="main-content" style="display: none;">
+        <div class="header">
+            <h1>منصة مَنَار التعليمية</h1>
+            <p>لوحة التحكم السحابية الاحترافية الموحدة لإدارة المعهد</p>
+        </div>
+
+        <div class="container">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('students-panel')">إدارة الطلاب</button>
+                <button class="tab-btn" onclick="switchTab('attendance-panel')">تسجيل الغياب اليومي والواتساب</button>
+                <button class="tab-btn" onclick="switchTab('finance-panel')">الخزينة والحسابات</button>
+            </div>
+
+            <!-- 1. لوحة إدارة الطلاب -->
+            <div id="students-panel" class="panel active">
+                <h2>تسجيل طالب جديد</h2>
+                <form id="student-form" onsubmit="addStudent(event)">
+                    <div class="form-group">
+                        <label>اسم الطالب الكامل:</label>
+                        <input type="text" id="st-name" required placeholder="مثال: أحمد علي">
+                    </div>
+                    <div class="form-group">
+                        <label>المرحلة الدراسية / الصف:</label>
+                        <input type="text" id="st-grade" required placeholder="مثال: السادس العلمي">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم هاتف ولي الأمر (واتساب):</label>
+                        <input type="text" id="st-phone" required placeholder="مثال: 077xxxxxxxx أو 96477xxxxxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label>مبلغ القسط الكلي (د.ع):</label>
+                        <input type="number" id="st-total-fee" required placeholder="مثال: 500000">
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ المدفوع مقدماً (د.ع):</label>
+                        <input type="number" id="st-paid-fee" value="0" required>
+                    </div>
+                    <button type="submit" class="btn-submit">حفظ بيانات الطالب سحابياً</button>
+                </form>
+
+                <h2>قائمة الطلاب المسجلين</h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الصف</th>
+                                <th>هاتف ولي الأمر</th>
+                                <th>القسط الكلي</th>
+                                <th>المدفوع</th>
+                                <th>المتبقي</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 2. لوحة الغياب والتحضير المتطور + إشعارات الواتساب -->
+            <div id="attendance-panel" class="panel">
+                <div class="date-picker-box">
+                    <label style="color: var(--primary-color); font-size: 16px;">اختر تاريخ اليوم المراد رصده أو مراجعته:</label>
+                    <input type="date" id="attendance-date" style="max-width: 250px; font-weight: bold; color: var(--secondary-color);" onchange="loadAttendanceForDate()">
+                </div>
+
+                <h2>رصد الحضور وإشعارات أولياء الأمور</h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الطالب</th>
+                                <th>الصف</th>
+                                <th>حالة غياب هذا اليوم</th>
+                                <th>رصد وتغيير الحالة</th>
+                                <th>إشعار ولي الأمر الفوري</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3. لوحة الحسابات والمالية -->
+            <div id="finance-panel" class="panel">
+                <h2>التقرير المالي العام للمعهد</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div>إجمالي الإيرادات المتوقعة</div>
+                        <div class="stat-number" id="fin-total-expected">0 د.ع</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div>إجمالي المبالغ المستلمة (الخزينة)</div>
+                        <div class="stat-number" id="fin-total-collected">0 د.ع</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div>إجمالي الديون المتبقية بالخارج</div>
+                        <div class="stat-number" id="fin-total-remaining">0 د.ع</div>
+                    </div>
+                </div>
+
+                <h2>تسديد قسط جديد</h2>
+                <form id="payment-form" onsubmit="collectPayment(event)">
+                    <div class="form-group">
+                        <label>اختر الطالب:</label>
+                        <select id="pay-student-select" required>
+                            <option value="">-- اختر من الطلاب المسجلين --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ المراد تسديده الآن (د.ع):</label>
+                        <input type="number" id="pay-amount" required placeholder="مثال: 50000">
+                    </div>
+                    <button type="submit" class="btn-submit" style="background-color: var(--secondary-color);">تأكيد وتحديث دفعة الحساب</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- كود المحرك البرمجي لـ Firebase و أتمتة رسائل الواتساب -->
+    <!-- ======================================================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot, setDoc, getDoc } 
+        from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // إعدادات قواعد البيانات السحابية الحية المستخرجة من حسابك الفايربيس
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXjoZiN7LeNCtvQlMyDHSopHDGrVnpIxY",
+            authDomain: "success-institute-4c8e4.firebaseapp.com",
+            projectId: "success-institute-4c8e4",
+            storageBucket: "success-institute-4c8e4.firebasestorage.app",
+            messagingSenderId: "704801983840",
+            appId: "1:704801983840:web:d80c8e4a56c013f7daa205",
+            measurementId: "G-NLZT9F3HGZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let localStudents = [];
+        let currentDayAttendance = {}; 
+
+        // ضبط التاريخ تلقائياً ليومنا الحالي
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('attendance-date').value = today;
+
+        // بوابة الأمان والدخول (يمكنك تعديل الرقم 1234 لأي رمز تريده)
+        window.verifyAccess = function() {
+            const pin = document.getElementById('secret-pin').value;
+            if (pin === "1234") { 
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                startRealtimeSync();
+            } else {
+                alert("رمز الوصول غير صحيح، يرجى المحاولة مجدداً!");
+            }
+        }
+
+        function startRealtimeSync() {
+            onSnapshot(collection(db, "students"), (snapshot) => {
+                localStudents = [];
+                snapshot.forEach((doc) => {
+                    localStudents.push({ id: doc.id, ...doc.data() });
+                });
+                loadAttendanceForDate(); 
+            });
+        }
+
+        // سحب غياب تاريخ محدد
+        window.loadAttendanceForDate = async function() {
+            const selectedDate = document.getElementById('attendance-date').value;
+            if(!selectedDate) return;
+
+            try {
+                const dateDocRef = doc(db, "attendance", selectedDate);
+                const dateDocSnap = await getDoc(dateDocRef);
+                
+                if (dateDocSnap.exists()) {
+                    currentDayAttendance = dateDocSnap.data();
+                } else {
+                    currentDayAttendance = {}; 
+                }
+                renderAll();
+            } catch(e) {
+                console.error("Error loading date data: ", e);
+            }
+        }
+
+        // تسجيل طالب جديد
+        window.addStudent = async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('st-name').value;
+            const grade = document.getElementById('st-grade').value;
+            const phone = document.getElementById('st-phone').value;
+            const totalFee = Number(document.getElementById('st-total-fee').value);
+            const paidFee = Number(document.getElementById('st-paid-fee').value);
+
+            try {
+                document.getElementById('loading').style.display = 'flex';
+                await addDoc(collection(db, "students"), {
+                    name: name,
+                    grade: grade,
+                    phone: phone,
+                    totalFee: totalFee,
+                    paidFee: paidFee
+                });
+                document.getElementById('student-form').reset();
+            } catch (error) {
+                alert("خطأ في السيرفر: " + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // حفظ الحضور والغياب سحابياً
+        window.markAttendance = async function(studentId, status) {
+            const selectedDate = document.getElementById('attendance-date').value;
+            currentDayAttendance[studentId] = status;
+
+            try {
+                await setDoc(doc(db, "attendance", selectedDate), currentDayAttendance);
+                renderAll();
+            } catch (error) {
+                alert("فشل الحفظ السحابي: " + error.message);
+            }
+        }
+
+        // دالة إنشاء وإرسال رسالة الواتساب الذكية باسم معهد منار
+        window.sendWhatsAppNotice = function(studentId) {
+            const student = localStudents.find(s => s.id === studentId);
+            const selectedDate = document.getElementById('attendance-date').value;
+            const status = currentDayAttendance[studentId] || "غير مرصود بعد";
+
+            if (!student) return;
+            if (status === "غير مرصود بعد") {
+                alert("يرجى رصد حالة الطالب (حاضر أو غائب) أولاً قبل إرسال الرسالة!");
+                return;
+            }
+
+            // تجهيز رقم الهاتف بشكل دولي صحيح لتفادي الأخطاء
+            let formattedPhone = student.phone.trim();
+            if (formattedPhone.startsWith('0')) {
+                formattedPhone = '964' + formattedPhone.substring(1);
+            }
+
+            // صياغة الرسالة الرسمية تلقائياً بناءً على الاسم الجديد للمعهد "منار"
+            let message = "";
+            if (status === "حاضر") {
+                message = `تحية طيبة من إدارة معهد مَنَار التعليمي.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المجموعات التعليمية للمعهد لتاريخ ${selectedDate} وتلقى دروسه بانتظام.\n\nنتمنى له التوفيق والنجاح الدائم.`;
+            } else if (status === "غائب") {
+                message = `تنبيه هام من إدارة معهد مَنَار التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرات المقررة لهذا اليوم ${selectedDate}.\n\nيرجى التواصل معنا لتوضيح سبب الغياب لضمان عدم تأخره في المادة.`;
+            }
+
+            // فتح رابط الواتساب الرسمي لنقل الرسالة فوراً
+            const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // تسديد الدفعات المالية
+        window.collectPayment = async function(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('pay-student-select').value;
+            const amount = Number(document.getElementById('pay-amount').value);
+
+            if(!studentId) return;
+
+            const student = localStudents.find(s => s.id === studentId);
+            if(student) {
+                const newPaid = student.paidFee + amount;
+                if(newPaid > student.totalFee) {
+                    alert("خطأ: المبلغ المدفوع الكلي سيتجاوز القسط الأصلي!");
+                    return;
+                }
+
+                try {
+                    document.getElementById('loading').style.display = 'flex';
+                    await updateDoc(doc(db, "students", studentId), { paidFee: newPaid });
+                    document.getElementById('payment-form').reset();
+                } catch (error) {
+                    alert("فشل التحديث المالي: " + error.message);
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                }
+            }
+        }
+
+        // حذف طالب
+        window.deleteStudent = async function(id) {
+            if(confirm("هل أنت متأكد من حذف هذا الطالب نهائياً من السيرفر؟")) {
+                try {
+                    await deleteDoc(doc(db, "students", id));
+                } catch (error) {
+                    alert("فشل الحذف: " + error.message);
+                }
+            }
+        }
+
+        // بناء وعرض كل الواجهات والجداول
+        function renderAll() {
+            const tableBody = document.getElementById('students-table-body');
+            const attendBody = document.getElementById('attendance-table-body');
+            const selectMenu = document.getElementById('pay-student-select');
+
+            tableBody.innerHTML = '';
+            attendBody.innerHTML = '';
+            selectMenu.innerHTML = '<option value="">-- اختر من الطلاب المسجلين --</option>';
+
+            let totalExpected = 0;
+            let totalCollected = 0;
+
+            localStudents.forEach(student => {
+                const remaining = student.totalFee - student.paidFee;
+                totalExpected += student.totalFee;
+                totalCollected += student.paidFee;
+
+                // أ. جدول صفحة الطلاب
+                tableBody.innerHTML += `<tr>
+                    <td><strong>${student.name}</strong></td>
+                    <td>${student.grade}</td>
+                    <td><span style="color:#555; font-family:monospace;">${student.phone}</span></td>
+                    <td>${student.totalFee.toLocaleString()} د.ع</td>
+                    <td>${student.paidFee.toLocaleString()} د.ع</td>
+                    <td style="color: ${remaining > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">${remaining.toLocaleString()} د.ع</td>
+                    <td><button class="btn-action btn-del" onclick="deleteStudent('${student.id}')">حذف</button></td>
+                </tr>`;
+
+                // b. جدول الغياب والواتساب
+                const currentStatus = currentDayAttendance[student.id] || "غير مرصود بعد";
+                let badgeClass = 'status-none';
+                if(currentStatus === 'حاضر') badgeClass = 'status-present';
+                if(currentStatus === 'غائب') badgeClass = 'status-absent';
+
+                attendBody.innerHTML += `<tr>
+                    <td>${student.name}</td>
+                    <td>${student.grade}</td>
+                    <td><span class="status-badge ${badgeClass}">${currentStatus}</span></td>
+                    <td>
+                        <button class="btn-action btn-p" onclick="markAttendance('${student.id}', 'حاضر')">حاضر</button>
+                        <button class="btn-action btn-a" onclick="markAttendance('${student.id}', 'غائب')">غائب</button>
+                    </td>
+                    <td>
+                        <button class="btn-action btn-wa" onclick="sendWhatsAppNotice('${student.id}')">
+                           💬 إرسال عبر الواتساب
+                        </button>
+                    </td>
+                </tr>`;
+
+                // ج. قائمة اختيار تسديد الأقساط
+                selectMenu.innerHTML += `<option value="${student.id}">${student.name} (المتبقي: ${remaining.toLocaleString()} د.ع)</option>`;
+            });
+
+            document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
+            document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
+            document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
+        }
+    </script>
+
+    <script>
+        function switchTab(panelId) {
+            document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
