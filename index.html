@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة منار - إدارة المعهد التعليمي</title>
+    <title>منصة أمل التعليمية</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -18,13 +18,11 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background-color: #eef2f7;
             color: var(--dark-text);
         }
 
-        /* شاشة تسجيل الدخول */
         .login-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -34,174 +32,100 @@
         }
 
         .login-box {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
+            background: white; padding: 40px; border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
+            text-align: center; max-width: 400px; width: 90%;
         }
 
         .header {
             background-color: var(--primary-color);
-            color: white;
-            padding: 20px;
-            text-align: center;
+            color: white; padding: 20px; text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
+        .teacher-badge-header {
+            background-color: #e67e22;
+            color: white; padding: 5px 15px; border-radius: 20px;
+            display: inline-block; font-size: 14px; margin-top: 5px;
+        }
+
         .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
+            max-width: 1200px; margin: 30px auto; padding: 0 20px;
         }
 
         .tabs {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
+            display: flex; justify-content: center; gap: 15px; margin-bottom: 30px;
         }
 
         .tab-btn {
-            padding: 12px 25px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            border-radius: 8px;
-            background-color: white;
-            color: var(--primary-color);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.3s;
+            padding: 12px 25px; font-size: 16px; font-weight: bold;
+            cursor: pointer; border: none; border-radius: 8px;
+            background-color: white; color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.3s;
         }
 
         .tab-btn.active, .tab-btn:hover {
-            background-color: var(--secondary-color);
-            color: white;
+            background-color: var(--secondary-color); color: white;
             transform: translateY(-2px);
         }
 
         .panel {
-            display: none;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: none; background: white; padding: 25px;
+            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
-        .panel.active {
-            display: block;
-        }
+        .panel.active { display: block; }
 
         h2 {
-            color: var(--primary-color);
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 0;
+            color: var(--primary-color); border-bottom: 2px solid #eee;
+            padding-bottom: 10px; margin-top: 0;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; }
 
         input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 14px;
+            width: 100%; padding: 10px; border: 1px solid #ccc;
+            border-radius: 6px; box-sizing: border-box; font-size: 14px;
         }
 
         .date-picker-box {
-            background: #e8f4fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-right: 5px solid var(--secondary-color);
+            background: #e8f4fd; padding: 15px; border-radius: 8px;
+            margin-bottom: 20px; border-right: 5px solid var(--secondary-color);
         }
 
         button.btn-submit {
-            background-color: var(--success-color);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            width: 100%;
-            transition: background 0.2s;
+            background-color: var(--success-color); color: white;
+            border: none; padding: 12px 20px; border-radius: 6px;
+            cursor: pointer; font-size: 16px; font-weight: bold;
+            width: 100%; transition: background 0.2s;
         }
-
         button.btn-submit:hover { background-color: #27ae60; }
 
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px; margin-bottom: 25px;
         }
 
         .stat-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            border-right: 5px solid var(--secondary-color);
+            background: #f8f9fa; padding: 20px; border-radius: 8px;
+            text-align: center; border-right: 5px solid var(--secondary-color);
         }
-
         .stat-card.success { border-right-color: var(--success-color); }
         .stat-card.danger { border-right-color: var(--danger-color); }
 
-        .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 5px;
-        }
+        .stat-number { font-size: 24px; font-weight: bold; margin-top: 5px; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: right;
-            border-bottom: 1px solid #eee;
-            vertical-align: middle;
-        }
-
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; vertical-align: middle; }
         th { background-color: #f4f6f9; color: var(--primary-color); }
 
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
         .status-present { background-color: #d4edda; color: #155724; }
         .status-absent { background-color: #f8d7da; color: #721c24; }
         .status-none { background-color: #e2e3e5; color: #383d41; }
 
-        .btn-action {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 5px;
-            font-weight: bold;
-        }
+        .btn-action { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: bold; }
         .btn-p { background-color: var(--success-color); color: white; }
         .btn-a { background-color: var(--danger-color); color: white; }
         .btn-del { background-color: #7f8c8d; color: white; }
@@ -209,58 +133,64 @@
         .btn-wa:hover { background-color: #1ebe57; }
 
         .loading-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8);
-            display: flex; justify-content: center; align-items: center;
-            font-size: 20px; font-weight: bold; color: var(--primary-color);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8); display: flex; justify-content: center;
+            align-items: center; font-size: 20px; font-weight: bold; color: var(--primary-color);
             z-index: 9999;
+        }
+
+        .logout-btn {
+            background-color: var(--danger-color); color: white; border: none;
+            padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;
+            float: left; margin-top: -45px; margin-left: 20px;
         }
     </style>
 </head>
 <body>
 
-    <!-- بوابات الدخول والتحميل السحابي -->
     <div id="login-panel" class="login-screen">
         <div class="login-box">
-            <h2 style="border:none; margin-bottom: 20px;">منصة مَنَار التعليمية</h2>
-            <p style="color: #666; margin-bottom: 20px;">الرجاء إدخال رمز الوصول الآمن للمعهد</p>
-            <input type="password" id="secret-pin" placeholder="أدخل رمز الدخول الخاص بك" style="text-align: center; font-size: 18px; margin-bottom: 20px;"><br><br>
-            <button class="btn-submit" onclick="verifyAccess()">فتح لوحة الإدارة</button>
+            <h2 style="border:none; margin-bottom: 10px;">منصة أمل التعليمية</h2>
+            <p style="color: #666; margin-bottom: 20px;">الرجاء إدخال رمز الدخول المخصص لك</p>
+            <input type="password" id="secret-pin" placeholder="أدخل الرمز السري هنا" style="text-align: center; font-size: 18px; margin-bottom: 20px;"><br><br>
+            <button class="btn-submit" onclick="verifyAccess()">تسجيل الدخول الآمن</button>
         </div>
     </div>
 
     <div id="loading" class="loading-overlay" style="display: none;">جاري الاتصال بالسحابة...</div>
 
-    <!-- المحتوى الرئيسي للموقع -->
     <div id="main-content" style="display: none;">
         <div class="header">
-            <h1>منصة مَنَار التعليمية</h1>
-            <p>لوحة التحكم السحابية الاحترافية الموحدة لإدارة المعهد</p>
+            <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+            <h1>منصة أمل التعليمية</h1>
+            <p id="user-welcome-msg">لوحة التحكم الموحدة لإدارة التعليم الذكي</p>
+            <div id="teacher-tag" class="teacher-badge-header" style="display: none;">حساب مدرس مخصص</div>
         </div>
 
         <div class="container">
-            <div class="tabs">
+            <div class="tabs" id="admin-tabs">
                 <button class="tab-btn active" onclick="switchTab('students-panel')">إدارة الطلاب</button>
                 <button class="tab-btn" onclick="switchTab('attendance-panel')">تسجيل الغياب اليومي والواتساب</button>
                 <button class="tab-btn" onclick="switchTab('finance-panel')">الخزينة والحسابات</button>
             </div>
 
-            <!-- 1. لوحة إدارة الطلاب -->
             <div id="students-panel" class="panel active">
-                <h2>تسجيل طالب جديد</h2>
+                <h2>تسجيل طالب جديد في المنصة</h2>
                 <form id="student-form" onsubmit="addStudent(event)">
                     <div class="form-group">
                         <label>اسم الطالب الكامل:</label>
                         <input type="text" id="st-name" required placeholder="مثال: أحمد علي">
                     </div>
                     <div class="form-group">
-                        <label>المرحلة الدراسية / الصف:</label>
-                        <input type="text" id="st-grade" required placeholder="مثال: السادس العلمي">
+                        <label>المرحلة الدراسية / الصف (يرتبط بالمدرس تلقائياً):</label>
+                        <select id="st-grade" required>
+                            <option value="السادس العلمي">السادس العلمي (الخاصة بالأستاذ قاسم محمد)</option>
+                            <option value="الثالث متوسط">الثالث متوسط (باقي الحسابات الافتراضية)</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>رقم هاتف ولي الأمر (واتساب):</label>
-                        <input type="text" id="st-phone" required placeholder="مثال: 077xxxxxxxx أو 96477xxxxxxxx">
+                        <input type="text" id="st-phone" required placeholder="مثال: 077xxxxxxxx">
                     </div>
                     <div class="form-group">
                         <label>مبلغ القسط الكلي (د.ع):</label>
@@ -273,7 +203,7 @@
                     <button type="submit" class="btn-submit">حفظ بيانات الطالب سحابياً</button>
                 </form>
 
-                <h2>قائمة الطلاب المسجلين</h2>
+                <h2>قائمة الطلاب المسجلين بالمنصة</h2>
                 <div style="overflow-x: auto;">
                     <table>
                         <thead>
@@ -292,14 +222,13 @@
                 </div>
             </div>
 
-            <!-- 2. لوحة الغياب والتحضير المتطور + إشعارات الواتساب -->
             <div id="attendance-panel" class="panel">
                 <div class="date-picker-box">
                     <label style="color: var(--primary-color); font-size: 16px;">اختر تاريخ اليوم المراد رصده أو مراجعته:</label>
                     <input type="date" id="attendance-date" style="max-width: 250px; font-weight: bold; color: var(--secondary-color);" onchange="loadAttendanceForDate()">
                 </div>
 
-                <h2>رصد الحضور وإشعارات أولياء الأمور</h2>
+                <h2 id="attendance-title">رصد الحضور وإشعارات أولياء الأمور</h2>
                 <div style="overflow-x: auto;">
                     <table>
                         <thead>
@@ -316,9 +245,8 @@
                 </div>
             </div>
 
-            <!-- 3. لوحة الحسابات والمالية -->
             <div id="finance-panel" class="panel">
-                <h2>التقرير المالي العام للمعهد</h2>
+                <h2>التقرير المالي العام</h2>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div>إجمالي الإيرادات المتوقعة</div>
@@ -352,15 +280,11 @@
         </div>
     </div>
 
-    <!-- ======================================================= -->
-    <!-- كود المحرك البرمجي لـ Firebase و أتمتة رسائل الواتساب -->
-    <!-- ======================================================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot, setDoc, getDoc } 
         from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // إعدادات قواعد البيانات السحابية الحية المستخرجة من حسابك الفايربيس
         const firebaseConfig = {
             apiKey: "AIzaSyDXjoZiN7LeNCtvQlMyDHSopHDGrVnpIxY",
             authDomain: "success-institute-4c8e4.firebaseapp.com",
@@ -376,21 +300,58 @@
 
         let localStudents = [];
         let currentDayAttendance = {}; 
+        
+        let currentUserRole = "guest"; 
+        let targetGrade = "all";       
 
-        // ضبط التاريخ تلقائياً ليومنا الحالي
+        // تعديل قاعدة رموز الدخول المخصصة للمنصة
+        const usersDatabase = {
+            "1234": { name: "المصمم العام", role: "admin", grade: "all" },
+            "Qasim901": { name: "الأستاذ قاسم محمد", role: "teacher", grade: "السادس العلمي" },
+            "2023": { name: "الست زينة (افتراضي)", role: "teacher", grade: "الثالث متوسط" }
+        };
+
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('attendance-date').value = today;
 
-        // بوابة الأمان والدخول (يمكنك تعديل الرقم 1234 لأي رمز تريده)
         window.verifyAccess = function() {
-            const pin = document.getElementById('secret-pin').value;
-            if (pin === "1234") { 
+            const pin = document.getElementById('secret-pin').value.trim();
+            
+            if (usersDatabase[pin]) {
+                const user = usersDatabase[pin];
+                currentUserRole = user.role;
+                targetGrade = user.grade;
+
                 document.getElementById('login-panel').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
+
+                if (currentUserRole === "admin") {
+                    document.getElementById('admin-tabs').style.display = 'flex';
+                    document.getElementById('teacher-tag').style.display = 'none';
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً بك لوحة التحكم الموحدة لـ: ${user.name} 👑`;
+                    switchTab('students-panel');
+                } else {
+                    document.getElementById('admin-tabs').style.display = 'none';
+                    document.getElementById('teacher-tag').style.display = 'inline-block';
+                    document.getElementById('teacher-tag').innerText = `المدرس: ${user.name}`;
+                    document.getElementById('user-welcome-msg').innerText = `جدول المحاضرات والغياب الخاص بطلابك فقط`;
+                    
+                    document.getElementById('students-panel').style.display = 'none';
+                    document.getElementById('finance-panel').style.display = 'none';
+                    document.getElementById('attendance-panel').style.display = 'block';
+                    document.getElementById('attendance-panel').classList.add('active');
+                }
+
                 startRealtimeSync();
             } else {
-                alert("رمز الوصول غير صحيح، يرجى المحاولة مجدداً!");
+                alert("الرمز السري غير صحيح! يرجى إدخال الرمز المخصص لك كمدرس أو مصمم.");
             }
+        }
+
+        window.logout = function() {
+            document.getElementById('secret-pin').value = "";
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('login-panel').style.display = 'flex';
         }
 
         function startRealtimeSync() {
@@ -403,7 +364,6 @@
             });
         }
 
-        // سحب غياب تاريخ محدد
         window.loadAttendanceForDate = async function() {
             const selectedDate = document.getElementById('attendance-date').value;
             if(!selectedDate) return;
@@ -419,11 +379,10 @@
                 }
                 renderAll();
             } catch(e) {
-                console.error("Error loading date data: ", e);
+                console.error("Error loading alignment data: ", e);
             }
         }
 
-        // تسجيل طالب جديد
         window.addStudent = async function(e) {
             e.preventDefault();
             const name = document.getElementById('st-name').value;
@@ -435,11 +394,8 @@
             try {
                 document.getElementById('loading').style.display = 'flex';
                 await addDoc(collection(db, "students"), {
-                    name: name,
-                    grade: grade,
-                    phone: phone,
-                    totalFee: totalFee,
-                    paidFee: paidFee
+                    name: name, grade: grade, phone: phone,
+                    totalFee: totalFee, paidFee: paidFee
                 });
                 document.getElementById('student-form').reset();
             } catch (error) {
@@ -449,7 +405,6 @@
             }
         }
 
-        // حفظ الحضور والغياب سحابياً
         window.markAttendance = async function(studentId, status) {
             const selectedDate = document.getElementById('attendance-date').value;
             currentDayAttendance[studentId] = status;
@@ -462,7 +417,6 @@
             }
         }
 
-        // دالة إنشاء وإرسال رسالة الواتساب الذكية باسم معهد منار
         window.sendWhatsAppNotice = function(studentId) {
             const student = localStudents.find(s => s.id === studentId);
             const selectedDate = document.getElementById('attendance-date').value;
@@ -474,26 +428,23 @@
                 return;
             }
 
-            // تجهيز رقم الهاتف بشكل دولي صحيح لتفادي الأخطاء
             let formattedPhone = student.phone.trim();
             if (formattedPhone.startsWith('0')) {
                 formattedPhone = '964' + formattedPhone.substring(1);
             }
 
-            // صياغة الرسالة الرسمية تلقائياً بناءً على الاسم الجديد للمعهد "منار"
+            // تمت إزالة كلمة "معهد" وصياغة الرسالة باسم "منصة أمل التعليمية"
             let message = "";
             if (status === "حاضر") {
-                message = `تحية طيبة من إدارة معهد مَنَار التعليمي.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المجموعات التعليمية للمعهد لتاريخ ${selectedDate} وتلقى دروسه بانتظام.\n\nنتمنى له التوفيق والنجاح الدائم.`;
+                message = `تحية طيبة من إدارة منصة أَمَل التعليمية.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المحاضرة المقررة لتاريخ ${selectedDate} وتلقى دروسه بانتظام.\n\nنتمنى له التوفيق والنجاح الدائم.`;
             } else if (status === "غائب") {
-                message = `تنبيه هام من إدارة معهد مَنَار التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرات المقررة لهذا اليوم ${selectedDate}.\n\nيرجى التواصل معنا لتوضيح سبب الغياب لضمان عدم تأخره في المادة.`;
+                message = `تنبيه هام من إدارة منصة أَمَل التعليمية.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرات المقررة لهذا اليوم ${selectedDate}.\n\nيرجى التواصل مع المدرس لتوضيح سبب الغياب لضمان عدم تأخره في المادة.`;
             }
 
-            // فتح رابط الواتساب الرسمي لنقل الرسالة فوراً
             const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         }
 
-        // تسديد الدفعات المالية
         window.collectPayment = async function(e) {
             e.preventDefault();
             const studentId = document.getElementById('pay-student-select').value;
@@ -521,7 +472,6 @@
             }
         }
 
-        // حذف طالب
         window.deleteStudent = async function(id) {
             if(confirm("هل أنت متأكد من حذف هذا الطالب نهائياً من السيرفر؟")) {
                 try {
@@ -532,43 +482,46 @@
             }
         }
 
-        // بناء وعرض كل الواجهات والجداول
         function renderAll() {
             const tableBody = document.getElementById('students-table-body');
             const attendBody = document.getElementById('attendance-table-body');
             const selectMenu = document.getElementById('pay-student-select');
 
-            tableBody.innerHTML = '';
+            if(tableBody) tableBody.innerHTML = '';
             attendBody.innerHTML = '';
-            selectMenu.innerHTML = '<option value="">-- اختر من الطلاب المسجلين --</option>';
+            if(selectMenu) selectMenu.innerHTML = '<option value="">-- اختر من الطلاب المسجلين --</option>';
 
             let totalExpected = 0;
             let totalCollected = 0;
 
             localStudents.forEach(student => {
+                if (currentUserRole !== "admin" && student.grade !== targetGrade) {
+                    return; 
+                }
+
                 const remaining = student.totalFee - student.paidFee;
                 totalExpected += student.totalFee;
                 totalCollected += student.paidFee;
 
-                // أ. جدول صفحة الطلاب
-                tableBody.innerHTML += `<tr>
-                    <td><strong>${student.name}</strong></td>
-                    <td>${student.grade}</td>
-                    <td><span style="color:#555; font-family:monospace;">${student.phone}</span></td>
-                    <td>${student.totalFee.toLocaleString()} د.ع</td>
-                    <td>${student.paidFee.toLocaleString()} د.ع</td>
-                    <td style="color: ${remaining > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">${remaining.toLocaleString()} د.ع</td>
-                    <td><button class="btn-action btn-del" onclick="deleteStudent('${student.id}')">حذف</button></td>
-                </tr>`;
+                if(tableBody && currentUserRole === "admin") {
+                    tableBody.innerHTML += `<tr>
+                        <td><strong>${student.name}</strong></td>
+                        <td>${student.grade}</td>
+                        <td><span style="color:#555; font-family:monospace;">${student.phone}</span></td>
+                        <td>${student.totalFee.toLocaleString()} د.ع</td>
+                        <td>${student.paidFee.toLocaleString()} د.ع</td>
+                        <td style="color: ${remaining > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">${remaining.toLocaleString()} د.ع</td>
+                        <td><button class="btn-action btn-del" onclick="deleteStudent('${student.id}')">حذف</button></td>
+                    </tr>`;
+                }
 
-                // b. جدول الغياب والواتساب
                 const currentStatus = currentDayAttendance[student.id] || "غير مرصود بعد";
                 let badgeClass = 'status-none';
                 if(currentStatus === 'حاضر') badgeClass = 'status-present';
                 if(currentStatus === 'غائب') badgeClass = 'status-absent';
 
                 attendBody.innerHTML += `<tr>
-                    <td>${student.name}</td>
+                    <td><strong>${student.name}</strong></td>
                     <td>${student.grade}</td>
                     <td><span class="status-badge ${badgeClass}">${currentStatus}</span></td>
                     <td>
@@ -577,18 +530,21 @@
                     </td>
                     <td>
                         <button class="btn-action btn-wa" onclick="sendWhatsAppNotice('${student.id}')">
-                           💬 إرسال عبر الواتساب
+                           💬 إرسال واتساب
                         </button>
                     </td>
                 </tr>`;
 
-                // ج. قائمة اختيار تسديد الأقساط
-                selectMenu.innerHTML += `<option value="${student.id}">${student.name} (المتبقي: ${remaining.toLocaleString()} د.ع)</option>`;
+                if(selectMenu && currentUserRole === "admin") {
+                    selectMenu.innerHTML += `<option value="${student.id}">${student.name} (المتبقي: ${remaining.toLocaleString()} د.ع)</option>`;
+                }
             });
 
-            document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
-            document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
-            document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
+            if(currentUserRole === "admin") {
+                document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
+                document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
+                document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
+            }
         }
     </script>
 
