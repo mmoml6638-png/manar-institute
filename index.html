@@ -148,6 +148,7 @@
 </head>
 <body>
 
+    <!-- شاشة تسجيل الدخول بالرموز السرية للمدرسين والمدير المصمم -->
     <div id="login-panel" class="login-screen">
         <div class="login-box">
             <h2 style="border:none; margin-bottom: 10px;">منصة أمل التعليمية</h2>
@@ -159,6 +160,7 @@
 
     <div id="loading" class="loading-overlay" style="display: none;">جاري الاتصال بالسحابة...</div>
 
+    <!-- الواجهة الرئيسية للموقع -->
     <div id="main-content" style="display: none;">
         <div class="header">
             <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
@@ -168,12 +170,14 @@
         </div>
 
         <div class="container">
+            <!-- أزرار التبديل (تظهر للمصمم/المدير العام فقط) -->
             <div class="tabs" id="admin-tabs">
                 <button class="tab-btn active" onclick="switchTab('students-panel')">إدارة الطلاب</button>
                 <button class="tab-btn" onclick="switchTab('attendance-panel')">تسجيل الغياب اليومي والواتساب</button>
                 <button class="tab-btn" onclick="switchTab('finance-panel')">الخزينة والحسابات</button>
             </div>
 
+            <!-- 1. لوحة إدارة الطلاب (مصمم/مدير فقط) -->
             <div id="students-panel" class="panel active">
                 <h2>تسجيل طالب جديد في المنصة</h2>
                 <form id="student-form" onsubmit="addStudent(event)">
@@ -222,6 +226,7 @@
                 </div>
             </div>
 
+            <!-- 2. لوحة الغياب والتحضير (مشتركة وتتفلتر حسب المدرس) -->
             <div id="attendance-panel" class="panel">
                 <div class="date-picker-box">
                     <label style="color: var(--primary-color); font-size: 16px;">اختر تاريخ اليوم المراد رصده أو مراجعته:</label>
@@ -245,6 +250,7 @@
                 </div>
             </div>
 
+            <!-- 3. لوحة الحسابات والمالية (مصمم/مدير فقط) -->
             <div id="finance-panel" class="panel">
                 <h2>التقرير المالي العام</h2>
                 <div class="stats-grid">
@@ -280,6 +286,7 @@
         </div>
     </div>
 
+    <!-- المحرك البرمجي المتطور للفايربيس وإدارة المدرسين والصلحيات -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot, setDoc, getDoc } 
@@ -433,7 +440,7 @@
                 formattedPhone = '964' + formattedPhone.substring(1);
             }
 
-            // تمت إزالة كلمة "معهد" وصياغة الرسالة باسم "منصة أمل التعليمية"
+            // صياغة الرسالة الرسمية باسم "منصة أمل التعليمية"
             let message = "";
             if (status === "حاضر") {
                 message = `تحية طيبة من إدارة منصة أَمَل التعليمية.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المحاضرة المقررة لتاريخ ${selectedDate} وتلقى دروسه بانتظام.\n\nنتمنى له التوفيق والنجاح الدائم.`;
