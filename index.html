@@ -192,11 +192,7 @@
                     </div>
                     <div class="form-group">
                         <label>المرحلة الدراسية / الصف المتاحة لحسابك:</label>
-                        <select id="st-grade" required>
-                            <option value="ابتدائية">ابتدائية</option>
-                            <option value="متوسطة">متوسطة</option>
-                            <option value="اعدادية">اعدادية</option>
-                        </select>
+                        <select id="st-grade" required></select>
                     </div>
                     <div class="form-group">
                         <label>رقم هاتف ولي الأمر (واتساب):</label>
@@ -374,6 +370,20 @@
             return Number(val) || 0;
         }
 
+        // دالة لتوليد خيارات قائمة الصفوف داخل استمارة الإضافة بناءً على صلاحيات المستخدم
+        function setupGradeDropdown() {
+            const gradeSelect = document.getElementById('st-grade');
+            if (!gradeSelect) return;
+            gradeSelect.innerHTML = '';
+            
+            currentUserGrades.forEach(grade => {
+                let opt = document.createElement('option');
+                opt.value = grade;
+                opt.innerText = grade;
+                gradeSelect.appendChild(opt);
+            });
+        }
+
         window.verifyAccess = function() {
             const pin = document.getElementById('secret-pin').value.trim().toLowerCase();
             if (usersDatabase[pin]) {
@@ -397,6 +407,7 @@
                     document.getElementById('user-welcome-msg').innerText = `مرحباً، لديك كامل الصلاحيات لإدارة طلابك وماليتهم بمرونة.`;
                 }
 
+                setupGradeDropdown(); // تحديث خيارات الصفوف فور تسجيل الدخول الناجح
                 switchTab('students-panel');
                 window.initFirebaseSync();
             } else {
@@ -457,7 +468,14 @@
                 }
             });
             
-            if(currentUserRole !== "guest") renderAll();
+            if(currentUserRole !== "guest") {
+                const savedPin = localStorage.getItem('amal_saved_pin');
+                if (savedPin && usersDatabase[savedPin.trim().toLowerCase()]) {
+                    currentUserGrades = usersDatabase[savedPin.trim().toLowerCase()].grades;
+                    setupGradeDropdown();
+                }
+                renderAll();
+            }
         });
 
         window.addTeacher = async function(e) {
@@ -509,18 +527,25 @@
         
         window.addStudent = async function(e) {
             e.preventDefault();
+            const chosenGrade = document.getElementById('st-grade').value;
+            
+            if(!chosenGrade) {
+                alert("خطأ: يرجى تحديد المرحلة الدراسية أولاً!");
+                return;
+            }
+
             try {
                 document.getElementById('loading').style.display = 'flex';
                 await addDoc(collection(db, "students"), {
                     name: document.getElementById('st-name').value,
-                    grade: document.getElementById('st-grade').value,
+                    grade: chosenGrade,
                     phone: document.getElementById('st-phone').value,
-                    // تم إصلاح السحب هنا لينظف النص من الفوارز قبل رفعه للـ Firebase
                     totalFee: getCleanNumber(document.getElementById('st-total-fee').value),
                     paidFee: getCleanNumber(document.getElementById('st-paid-fee').value)
                 });
                 document.getElementById('student-form').reset();
-                alert("تم حفظ بيانات الطالب سحابياً بنجاح!");
+                setupGradeDropdown(); // إعادة ملء القائمة لتجنب الفراغات
+                alert("تم حفظ بيانات الطالب سحابياً بنجاح وبشكل متوافق مع صلاحيات الحساب!");
             } catch (error) {
                 alert("خطأ: " + error.message);
             } finally {
@@ -561,7 +586,6 @@
         window.collectPayment = async function(e) {
             e.preventDefault();
             const studentId = document.getElementById('pay-student-select').value;
-            // تم إصلاح السحب هنا لينظف النص من الفوارز قبل المعالجة المالية والتسديد
             const amount = getCleanNumber(document.getElementById('pay-amount').value);
             const student = localStudents.find(s => s.id === studentId);
             
@@ -597,7 +621,6 @@
             localStudents.forEach(student => {
                 if (currentUserRole !== "admin" && (!currentUserGrades || !currentUserGrades.includes(student.grade))) return;
 
-                // تحويل المبالغ المدخلة مسبقاً لأرقام نقية تحسباً لأي تضارب
                 const sTotalFee = getCleanNumber(student.totalFee);
                 const sPaidFee = getCleanNumber(student.paidFee);
                 const remaining = sTotalFee - sPaidFee;
