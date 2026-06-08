@@ -148,7 +148,7 @@
 </head>
 <body>
 
-    <!-- شاشة تسجيل الدخول بالرموز السرية للمدرسين والمدير المصمم -->
+    <!-- شاشة تسجيل الدخول بالرموز السرية للمدرسين والمدير -->
     <div id="login-panel" class="login-screen">
         <div class="login-box">
             <h2 style="border:none; margin-bottom: 10px;">منصة أمل التعليمية</h2>
@@ -170,14 +170,14 @@
         </div>
 
         <div class="container">
-            <!-- أزرار التبديل (تظهر للمصمم/المدير العام فقط) -->
-            <div class="tabs" id="admin-tabs">
+            <!-- شريط التبديل يظهر الآن للجميع (المدراء والأساتذة على حد سواء) -->
+            <div class="tabs" id="main-tabs">
                 <button class="tab-btn active" onclick="switchTab('students-panel')">إدارة الطلاب</button>
                 <button class="tab-btn" onclick="switchTab('attendance-panel')">تسجيل الغياب اليومي والواتساب</button>
                 <button class="tab-btn" onclick="switchTab('finance-panel')">الخزينة والحسابات</button>
             </div>
 
-            <!-- 1. لوحة إدارة الطلاب (مصمم/مدير فقط) -->
+            <!-- 1. لوحة إدارة الطلاب (مفتوحة للجميع) -->
             <div id="students-panel" class="panel active">
                 <h2>تسجيل طالب جديد في المنصة</h2>
                 <form id="student-form" onsubmit="addStudent(event)">
@@ -186,7 +186,7 @@
                         <input type="text" id="st-name" required placeholder="مثال: أحمد علي">
                     </div>
                     <div class="form-group">
-                        <label>المرحلة الدراسية / الصف (يرتبط بالمدرس تلقائياً):</label>
+                        <label>المرحلة الدراسية / الصف:</label>
                         <select id="st-grade" required>
                             <option value="السادس العلمي">السادس العلمي (الخاصة بالأستاذ قاسم محمد)</option>
                             <option value="الثالث متوسط">الثالث متوسط (باقي الحسابات الافتراضية)</option>
@@ -226,7 +226,7 @@
                 </div>
             </div>
 
-            <!-- 2. لوحة الغياب والتحضير (مشتركة وتتفلتر حسب المدرس) -->
+            <!-- 2. لوحة الغياب والتحضير (مفتوحة للجميع) -->
             <div id="attendance-panel" class="panel">
                 <div class="date-picker-box">
                     <label style="color: var(--primary-color); font-size: 16px;">اختر تاريخ اليوم المراد رصده أو مراجعته:</label>
@@ -250,7 +250,7 @@
                 </div>
             </div>
 
-            <!-- 3. لوحة الحسابات والمالية (مصمم/مدير فقط) -->
+            <!-- 3. لوحة الحسابات والمالية (مفتوحة ومفعلة للجميع) -->
             <div id="finance-panel" class="panel">
                 <h2>التقرير المالي العام</h2>
                 <div class="stats-grid">
@@ -286,7 +286,7 @@
         </div>
     </div>
 
-    <!-- المحرك البرمجي المتطور للفايربيس وإدارة المدرسين والصلحيات -->
+    <!-- المحرك البرمجي المتطور للفايربيس -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot, setDoc, getDoc } 
@@ -311,7 +311,7 @@
         let currentUserRole = "guest"; 
         let targetGrade = "all";       
 
-        // تعديل قاعدة رموز الدخول المخصصة للمنصة
+        // قاعدة الرموز السرية
         const usersDatabase = {
             "1234": { name: "المصمم العام", role: "admin", grade: "all" },
             "Qasim901": { name: "الأستاذ قاسم محمد", role: "teacher", grade: "السادس العلمي" },
@@ -332,23 +332,18 @@
                 document.getElementById('login-panel').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
 
+                // الترحيب المخصص حسب نوع الحساب
                 if (currentUserRole === "admin") {
-                    document.getElementById('admin-tabs').style.display = 'flex';
                     document.getElementById('teacher-tag').style.display = 'none';
-                    document.getElementById('user-welcome-msg').innerText = `مرحباً بك لوحة التحكم الموحدة لـ: ${user.name} 👑`;
-                    switchTab('students-panel');
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً بك في لوحة التحكم الكاملة لـ: ${user.name} 👑`;
                 } else {
-                    document.getElementById('admin-tabs').style.display = 'none';
                     document.getElementById('teacher-tag').style.display = 'inline-block';
                     document.getElementById('teacher-tag').innerText = `المدرس: ${user.name}`;
-                    document.getElementById('user-welcome-msg').innerText = `جدول المحاضرات والغياب الخاص بطلابك فقط`;
-                    
-                    document.getElementById('students-panel').style.display = 'none';
-                    document.getElementById('finance-panel').style.display = 'none';
-                    document.getElementById('attendance-panel').style.display = 'block';
-                    document.getElementById('attendance-panel').classList.add('active');
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً أستاذ، لديك الآن كامل الصلاحيات لإضافة طلابك وإدارتهم مالياً.`;
                 }
 
+                // فتح الشاشة الافتراضية للجميع (إدارة الطلاب)
+                switchTab('students-panel');
                 startRealtimeSync();
             } else {
                 alert("الرمز السري غير صحيح! يرجى إدخال الرمز المخصص لك كمدرس أو مصمم.");
@@ -386,7 +381,7 @@
                 }
                 renderAll();
             } catch(e) {
-                console.error("Error loading alignment data: ", e);
+                console.error("Error loading attendance data: ", e);
             }
         }
 
@@ -440,7 +435,6 @@
                 formattedPhone = '964' + formattedPhone.substring(1);
             }
 
-            // صياغة الرسالة الرسمية باسم "منصة أمل التعليمية"
             let message = "";
             if (status === "حاضر") {
                 message = `تحية طيبة من إدارة منصة أَمَل التعليمية.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المحاضرة المقررة لتاريخ ${selectedDate} وتلقى دروسه بانتظام.\n\nنتمنى له التوفيق والنجاح الدائم.`;
@@ -502,6 +496,7 @@
             let totalCollected = 0;
 
             localStudents.forEach(student => {
+                // فلترة العرض: إذا كان الحساب أستاذ، يرى فقط طلاب مرحلته في القوائم والتقارير المالية والغيابات
                 if (currentUserRole !== "admin" && student.grade !== targetGrade) {
                     return; 
                 }
@@ -510,7 +505,7 @@
                 totalExpected += student.totalFee;
                 totalCollected += student.paidFee;
 
-                if(tableBody && currentUserRole === "admin") {
+                if(tableBody) {
                     tableBody.innerHTML += `<tr>
                         <td><strong>${student.name}</strong></td>
                         <td>${student.grade}</td>
@@ -542,16 +537,15 @@
                     </td>
                 </tr>`;
 
-                if(selectMenu && currentUserRole === "admin") {
+                if(selectMenu) {
                     selectMenu.innerHTML += `<option value="${student.id}">${student.name} (المتبقي: ${remaining.toLocaleString()} د.ع)</option>`;
                 }
             });
 
-            if(currentUserRole === "admin") {
-                document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
-                document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
-                document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
-            }
+            // تحديث البطاقات المالية بناءً على الطلاب المفلترين للمدرس أو المالك الكلي
+            document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
+            document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
+            document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
         }
     </script>
 
