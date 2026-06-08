@@ -352,7 +352,6 @@
         const todayLocal = new Date().toLocaleDateString('en-CA');
         document.getElementById('attendance-date').value = todayLocal;
 
-        // دالة تنسيق الأرقام بالفوارز تلقائياً داخل حقول الإدخال
         window.formatCurrencyInput = function(input) {
             let value = input.value.replace(/,/g, '');
             if(!isNaN(value) && value !== '') {
@@ -362,7 +361,6 @@
             }
         };
 
-        // دالة تنظيف النص من الفوارز وتحويله لرقم حقيقي قبل الحفظ والعمليات الرياضية
         function getCleanNumber(val) {
             if(typeof val === 'string') {
                 return Number(val.replace(/,/g, '')) || 0;
@@ -370,18 +368,27 @@
             return Number(val) || 0;
         }
 
-        // دالة لتوليد خيارات قائمة الصفوف داخل استمارة الإضافة بناءً على صلاحيات المستخدم
         function setupGradeDropdown() {
             const gradeSelect = document.getElementById('st-grade');
             if (!gradeSelect) return;
             gradeSelect.innerHTML = '';
             
-            currentUserGrades.forEach(grade => {
-                let opt = document.createElement('option');
-                opt.value = grade;
-                opt.innerText = grade;
-                gradeSelect.appendChild(opt);
-            });
+            if(currentUserGrades && currentUserGrades.length > 0) {
+                currentUserGrades.forEach(grade => {
+                    let opt = document.createElement('option');
+                    opt.value = grade;
+                    opt.innerText = grade;
+                    gradeSelect.appendChild(opt);
+                });
+            } else {
+                // حل احتياطي في حال تأخر تحميل قاعدة البيانات
+                ["ابتدائية", "متوسطة", "اعدادية"].forEach(grade => {
+                    let opt = document.createElement('option');
+                    opt.value = grade;
+                    opt.innerText = grade;
+                    gradeSelect.appendChild(opt);
+                });
+            }
         }
 
         window.verifyAccess = function() {
@@ -407,7 +414,7 @@
                     document.getElementById('user-welcome-msg').innerText = `مرحباً، لديك كامل الصلاحيات لإدارة طلابك وماليتهم بمرونة.`;
                 }
 
-                setupGradeDropdown(); // تحديث خيارات الصفوف فور تسجيل الدخول الناجح
+                setupGradeDropdown(); 
                 switchTab('students-panel');
                 window.initFirebaseSync();
             } else {
@@ -421,6 +428,8 @@
             document.getElementById('main-content').style.display = 'none';
             document.getElementById('login-panel').style.display = 'flex';
             document.getElementById('teachers-tab').style.display = 'none';
+            currentUserRole = "guest";
+            currentUserGrades = [];
         };
 
         window.switchTab = function(panelId) {
@@ -449,7 +458,6 @@
 
             snapshot.forEach((docSnap) => {
                 const tData = docSnap.data();
-                const tId = docSnap.id;
                 const cleanPin = tData.pin.trim().toLowerCase();
 
                 usersDatabase[cleanPin] = {
@@ -463,11 +471,12 @@
                         <td><strong>${tData.name}</strong></td>
                         <td><span style="font-family:monospace; font-weight:bold; color:#f39c12;">${tData.pin}</span></td>
                         <td>${tData.grades.join(' ، ')}</td>
-                        <td><button class="btn-action btn-del" onclick="deleteTeacher('${tId}')">حذف الأستاذ</button></td>
+                        <td><button class="btn-action btn-del" onclick="deleteTeacher('${docSnap.id}')">حذف الأستاذ</button></td>
                     </tr>`;
                 }
             });
             
+            // تم إصلاح التحديث هنا لكي لا يقوم بمسح صلاحيات الحساب الحالي المفتوح
             if(currentUserRole !== "guest") {
                 const savedPin = localStorage.getItem('amal_saved_pin');
                 if (savedPin && usersDatabase[savedPin.trim().toLowerCase()]) {
@@ -495,14 +504,14 @@
                 document.getElementById('teacher-form').reset();
                 alert("تم حفظ الأستاذ الجديد وتفعيل حسابه فوراً!");
             } catch(err) {
-                alert("فشل الحفظ: " + err.message);
+                alert("خطأ في الحفظ: " + err.message);
             } finally {
                 document.getElementById('loading').style.display = 'none';
             }
         };
 
         window.deleteTeacher = async function(id) {
-            if(confirm("هل أنت متأكد من حذف هذا الأستاذ وإلغاء صلاحية دخوله للمنظومة نهائياً؟")) {
+            if(confirm("هل أنت متأكد من حذف هذا الأستاذ؟")) {
                 try {
                     await deleteDoc(doc(db, "teachers", id));
                 } catch(e) {
@@ -521,7 +530,7 @@
                 currentDayAttendance = dateDocSnap.exists() ? dateDocSnap.data() : {};
                 renderAll();
             } catch(e) {
-                console.error("Error loading data: ", e);
+                console.error(e);
             }
         };
         
@@ -530,7 +539,7 @@
             const chosenGrade = document.getElementById('st-grade').value;
             
             if(!chosenGrade) {
-                alert("خطأ: يرجى تحديد المرحلة الدراسية أولاً!");
+                alert("خطأ: يرجى تحديد المرحلة الدراسية!");
                 return;
             }
 
@@ -544,8 +553,8 @@
                     paidFee: getCleanNumber(document.getElementById('st-paid-fee').value)
                 });
                 document.getElementById('student-form').reset();
-                setupGradeDropdown(); // إعادة ملء القائمة لتجنب الفراغات
-                alert("تم حفظ بيانات الطالب سحابياً بنجاح وبشكل متوافق مع صلاحيات الحساب!");
+                setupGradeDropdown(); 
+                alert("تم حفظ بيانات الطالب سحابياً بنجاح!");
             } catch (error) {
                 alert("خطأ: " + error.message);
             } finally {
@@ -597,7 +606,7 @@
                     await updateDoc(doc(db, "students", studentId), { paidFee: newPaid });
                     document.getElementById('payment-form').reset();
                     alert("تم تحديث الدفعة المالية بنجاح!");
-                } catch (error) { alert("فشل حفظ البيانات المالية"); } finally { document.getElementById('loading').style.display = 'none'; }
+                } catch (error) { alert("فشل حفظ البيانات المادية"); } finally { document.getElementById('loading').style.display = 'none'; }
             }
         };
 
@@ -659,9 +668,9 @@
                 if(selectMenu) selectMenu.innerHTML += `<option value="${student.id}">${student.name} (المتبقي: ${remaining.toLocaleString()} د.ع)</option>`;
             });
 
-            document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
-            document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
-            document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
+            if(document.getElementById('fin-total-expected')) document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
+            if(document.getElementById('fin-total-collected')) document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
+            if(document.getElementById('fin-total-remaining')) document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
         };
 
         window.addEventListener('DOMContentLoaded', () => {
