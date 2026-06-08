@@ -21,7 +21,6 @@
             --whatsapp-color: #25D366;
             --light-bg: #f5f7fa;
             --dark-text: #2c3e50;
-            /* الخلفية الانسيابية المأخوذة من الشعار */
             --amal-gradient: linear-gradient(135deg, #bfe3ed 0%, #ecdcd1 100%);
         }
 
@@ -125,4 +124,420 @@
         .stat-number { font-size: 20px; font-weight: 800; margin-top: 6px; color: #1e293b; }
 
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.02); }
-        table { width: 100%; border-collapse: collapse; min-width: 60
+        table { width: 100%; border-collapse: collapse; min-width: 600px; background: #fff;}
+        th, td { padding: 12px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        th { background-color: #f8fafc; color: var(--primary-color); font-weight: 700; }
+
+        .status-badge { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; display: inline-block;}
+        .status-present { background-color: #d4edda; color: #155724; }
+        .status-absent { background-color: #f8d7da; color: #721c24; }
+        .status-none { background-color: #e2e3e5; color: #383d41; }
+
+        .btn-action { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; transition: all 0.2s; margin: 2px;}
+        .btn-p { background-color: var(--success-color); color: white; }
+        .btn-a { background-color: var(--danger-color); color: white; }
+        .btn-del { background-color: #94a3b8; color: white; }
+        .btn-wa { background-color: var(--whatsapp-color); color: white; display: inline-flex; align-items: center; gap: 4px; }
+        
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); display: flex; justify-content: center;
+            align-items: center; font-size: 18px; font-weight: bold; color: var(--primary-color);
+            z-index: 9999; backdrop-filter: blur(5px);
+        } 
+        
+        .logout-btn {
+            background-color: var(--danger-color); color: white; border: none;
+            padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;
+            position: absolute; left: 15px; top: 22px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-panel" class="login-screen">
+        <div class="login-box">
+            <div class="login-logo-sim">أمل</div>
+            <h2>منظومة إدارة التعليم الذكي</h2>
+            <p style="color: #64748b; margin-bottom: 20px; font-size: 13px; font-weight: 500;">يرجى كتابة رمز الوصول المخصص لك</p>
+            <input type="password" id="secret-pin" placeholder="الرمز السري الخاص بك" style="text-align: center; font-size: 18px; margin-bottom: 15px;"><br>
+            <button class="btn-submit" onclick="verifyAccess()">تسجيل الدخول الآمن</button>
+        </div>
+    </div>
+
+    <div id="loading" class="loading-overlay" style="display: none;">جاري الاتصال بالسحابة الآمنة...</div>
+
+    <div id="main-content" style="display: none;">
+        <div class="header">
+            <button class="logout-btn" onclick="logout()">خروج</button>
+            <h1>أمل</h1>
+            <p id="user-welcome-msg" style="margin: 5px 0 0 0; color: #555; font-size: 13px;">منظومة إدارة التعليم الذكي الموحدة</p>
+            <div id="teacher-tag" class="teacher-badge-header" style="display: none;"></div>
+        </div>
+
+        <div class="container">
+            <div class="tabs" id="main-tabs">
+                <button class="tab-btn active" onclick="switchTab('students-panel')">إدارة الطلاب</button>
+                <button class="tab-btn" onclick="switchTab('attendance-panel')">الغياب والواتساب</button>
+                <button class="tab-btn" onclick="switchTab('finance-panel')">الخزينة والحسابات</button>
+            </div>
+
+            <div id="students-panel" class="panel active">
+                <h2>تسجيل طالب جديد في التطبيق</h2>
+                <form id="student-form" onsubmit="addStudent(event)">
+                    <div class="form-group">
+                        <label>اسم الطالب الكامل:</label>
+                        <input type="text" id="st-name" required placeholder="مثال: محمد علي">
+                    </div>
+                    <div class="form-group">
+                        <label>المرحلة الدراسية / الصف المتاحة لحسابك:</label>
+                        <select id="st-grade" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>رقم هاتف ولي الأمر (واتساب):</label>
+                        <input type="text" id="st-phone" required placeholder="مثال: 077xxxxxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label>مبلغ القسط الكلي (د.ع):</label>
+                        <input type="number" id="st-total-fee" required placeholder="مثال: 500000">
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ المدفوع مقدماً (د.ع):</label>
+                        <input type="number" id="st-paid-fee" value="0" required>
+                    </div>
+                    <button type="submit" class="btn-submit">حفظ بيانات الطالب سحابياً</button>
+                </form> 
+                
+                <h2 style="margin-top: 25px;">قائمة الطلاب المسجلين</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الصف</th>
+                                <th>الهاتف</th>
+                                <th>القسط الكلي</th>
+                                <th>المدفوع</th>
+                                <th>المتبقي</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="attendance-panel" class="panel">
+                <div class="date-picker-box">
+                    <label style="color: var(--primary-color); font-size: 14px; margin-bottom:8px;">اختر تاريخ اليوم المراد رصده:</label>
+                    <input type="date" id="attendance-date" style="max-width: 100%; font-weight: bold;" onchange="loadAttendanceForDate()">
+                </div>
+
+                <h2 id="attendance-title">رصد الحضور وإشعارات أولياء الأمور</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الطالب</th>
+                                <th>الصف</th>
+                                <th>الحالة</th>
+                                <th>رصد الحالة</th>
+                                <th>إشعار فوري</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="finance-panel" class="panel">
+                <h2>التقرير المالي العام</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div>الإيرادات المتوقعة</div>
+                        <div class="stat-number" id="fin-total-expected">0 د.ع</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div>المبالغ المستلمة (الخزينة)</div>
+                        <div class="stat-number" id="fin-total-collected">0 د.ع</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div>الديون المتبقية</div>
+                        <div class="stat-number" id="fin-total-remaining">0 د.ع</div>
+                    </div>
+                </div>
+
+                <h2>تسديد قسط جديد</h2>
+                <form id="payment-form" onsubmit="collectPayment(event)">
+                    <div class="form-group">
+                        <label>اختر الطالب:</label>
+                        <select id="pay-student-select" required>
+                            <option value="">-- اختر من الطلاب المسجلين --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ المراد تسديده الآن (د.ع):</label>
+                        <input type="number" id="pay-amount" required placeholder="مثال: 50000">
+                    </div>
+                    <button type="submit" class="btn-submit">تأكيد وتحديث دفعة الحساب</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const usersDatabase = {
+            "1234": { name: "المصمم العام", role: "admin", grades: ["السادس العلمي", "الثالث متوسط"] },
+            "Qasim901": { name: "الأستاذ قاسم محمد", role: "teacher", grades: ["السادس العلمي (إعدادية الأستاذ قاسم)", "الثالث متوسط (متوسطة الأستاذ قاسم)"] },
+            "Marwa2026": { name: "الأستاذة مروة السوداني", role: "teacher", grades: ["السادس العلمي (إعدادية الأستاذة مروة)", "الثالث متوسط (متوسطة الأستاذة مروة)"] },
+            "2023": { name: "الست زينة", role: "teacher", grades: ["الثالث متوسط (حساب الست زينة)"] }
+        };
+
+        let currentUserRole = "guest"; 
+        let currentUserGrades = [];
+
+        function verifyAccess() {
+            const pin = document.getElementById('secret-pin').value.trim();
+            if (usersDatabase[pin]) {
+                const user = usersDatabase[pin];
+                currentUserRole = user.role;
+                currentUserGrades = user.grades;
+
+                // حفظ الرمز السري في ذاكرة المتصفح/الهاتف لعدم طلبه مجدداً
+                localStorage.setItem('amal_saved_pin', pin);
+
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+
+                if (currentUserRole === "admin") {
+                    document.getElementById('teacher-tag').style.display = 'none';
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً بك في لوحة تحكم تطبيق: ${user.name} 👑`;
+                } else {
+                    document.getElementById('teacher-tag').style.display = 'inline-block';
+                    document.getElementById('teacher-tag').innerText = `المدرس: ${user.name}`;
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً، لديك كامل الصلاحيات لإدارة طلابك وماليتهم بمرونة.`;
+                }
+
+                const stGradeSelect = document.getElementById('st-grade');
+                stGradeSelect.innerHTML = ''; 
+                currentUserGrades.forEach(grade => {
+                    stGradeSelect.innerHTML += `<option value="${grade}">${grade}</option>`;
+                });
+
+                switchTab('students-panel');
+                
+                // تشغيل المزامنة السحابية إذا كانت محملة
+                if (window.initFirebaseSync) {
+                    window.initFirebaseSync();
+                }
+            } else {
+                alert("الرمز السري غير صحيح!");
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('amal_saved_pin');
+            document.getElementById('secret-pin').value = "";
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('login-panel').style.display = 'flex';
+        }
+
+        function switchTab(panelId) {
+            document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            if(event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+        }
+
+        // فحص تلقائي عند فتح الموقع: إذا كان مسجل دخول سابقاً يتم إدخاله فوراً
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedPin = localStorage.getItem('amal_saved_pin');
+            if (savedPin && usersDatabase[savedPin]) {
+                document.getElementById('secret-pin').value = savedPin;
+                verifyAccess();
+            }
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, deleteDoc, onSnapshot, setDoc, getDoc } 
+        from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; 
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXjoZiN7LeNCtvQlMyDHSopHDGrVnpIxY",
+            authDomain: "success-institute-4c8e4.firebaseapp.com",
+            projectId: "success-institute-4c8e4",
+            storageBucket: "success-institute-4c8e4.firebasestorage.app",
+            messagingSenderId: "704801983840",
+            appId: "1:704801983840:web:d80c8e4a56c013f7daa205",
+            measurementId: "G-NLZT9F3HGZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let localStudents = [];
+        let currentDayAttendance = {}; 
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('attendance-date').value = today;
+
+        window.initFirebaseSync = function() {
+            onSnapshot(collection(db, "students"), (snapshot) => {
+                localStudents = [];
+                snapshot.forEach((doc) => {
+                    localStudents.push({ id: doc.id, ...doc.data() });
+                });
+                loadAttendanceForDate(); 
+            });
+        }
+
+        window.loadAttendanceForDate = async function() {
+            const selectedDate = document.getElementById('attendance-date').value;
+            if(!selectedDate) return;
+
+            try {
+                const dateDocRef = doc(db, "attendance", selectedDate);
+                const dateDocSnap = await getDoc(dateDocRef);
+                currentDayAttendance = dateDocSnap.exists() ? dateDocSnap.data() : {};
+                renderAll();
+            } catch(e) {
+                console.error("Error loading data: ", e);
+            }
+        } 
+        
+        window.addStudent = async function(e) {
+            e.preventDefault();
+            try {
+                document.getElementById('loading').style.display = 'flex';
+                await addDoc(collection(db, "students"), {
+                    name: document.getElementById('st-name').value,
+                    grade: document.getElementById('st-grade').value,
+                    phone: document.getElementById('st-phone').value,
+                    totalFee: Number(document.getElementById('st-total-fee').value),
+                    paidFee: Number(document.getElementById('st-paid-fee').value)
+                });
+                document.getElementById('student-form').reset();
+            } catch (error) {
+                alert("خطأ: " + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        window.markAttendance = async function(studentId, status) {
+            const selectedDate = document.getElementById('attendance-date').value;
+            currentDayAttendance[studentId] = status;
+            try {
+                await setDoc(doc(db, "attendance", selectedDate), currentDayAttendance);
+                renderAll();
+            } catch (error) {
+                alert("فشل الحفظ: " + error.message);
+            }
+        }
+
+        window.sendWhatsAppNotice = function(studentId) {
+            const student = localStudents.find(s => s.id === studentId);
+            const selectedDate = document.getElementById('attendance-date').value;
+            const status = currentDayAttendance[studentId] || "غير مرصود بعد";
+
+            if (!student || status === "غير مرصود بعد") {
+                alert("يرجى رصد حالة الطالب أولاً!"); return;
+            }
+
+            let formattedPhone = student.phone.trim();
+            if (formattedPhone.startsWith('0')) formattedPhone = '964' + formattedPhone.substring(1);
+
+            let message = status === "حاضر" 
+                ? `تحية طيبة من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المحاضرة المقررة لتاريخ ${selectedDate}.`
+                : `تنبيه هام من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرة لتاريخ ${selectedDate}.`;
+
+            window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        window.collectPayment = async function(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('pay-student-select').value;
+            const amount = Number(document.getElementById('pay-amount').value);
+            const student = localStudents.find(s => s.id === studentId);
+            
+            if(student) {
+                const newPaid = student.paidFee + amount;
+                if(newPaid > student.totalFee) { alert("المبلغ يتجاوز القسط الكلي!"); return; }
+                try {
+                    document.getElementById('loading').style.display = 'flex';
+                    await updateDoc(doc(db, "students", studentId), { paidFee: newPaid });
+                    document.getElementById('payment-form').reset();
+                } catch (error) { alert("فشل الحفظ المالية"); } finally { document.getElementById('loading').style.display = 'none'; }
+            }
+        }
+
+        window.deleteStudent = async function(id) {
+            if(confirm("هل أنت متأكد من حذف الطالب نهائياً؟")) {
+                try { await deleteDoc(doc(db, "students", id)); } catch (e) { alert("فشل الحذف"); }
+            }
+        }
+
+        window.renderAll = function() {
+            const tableBody = document.getElementById('students-table-body');
+            const attendBody = document.getElementById('attendance-table-body');
+            const selectMenu = document.getElementById('pay-student-select');
+
+            if(tableBody) tableBody.innerHTML = '';
+            if(attendBody) attendBody.innerHTML = '';
+            if(selectMenu) selectMenu.innerHTML = '<option value="">-- اختر من الطلاب المسجلين --</option>';
+
+            let totalExpected = 0, totalCollected = 0;
+
+            localStudents.forEach(student => {
+                if (currentUserRole !== "admin" && !currentUserGrades.includes(student.grade)) return;
+
+                const remaining = student.totalFee - student.paidFee;
+                totalExpected += student.totalFee; totalCollected += student.paidFee;
+
+                if(tableBody) {
+                    tableBody.innerHTML += `<tr>
+                        <td><strong>${student.name}</strong></td>
+                        <td>${student.grade}</td>
+                        <td><span style="font-family:monospace;">${student.phone}</span></td>
+                        <td>${student.totalFee.toLocaleString()} د.ع</td>
+                        <td>${student.paidFee.toLocaleString()} د.ع</td>
+                        <td style="color: ${remaining > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">${remaining.toLocaleString()} د.ع</td>
+                        <td><button class="btn-action btn-del" onclick="deleteStudent('${student.id}')">حذف</button></td>
+                    </tr>`;
+                }
+
+                const currentStatus = currentDayAttendance[student.id] || "غير مرصود بعد";
+                let badgeClass = currentStatus === 'حاضر' ? 'status-present' : (currentStatus === 'غائب' ? 'status-absent' : 'status-none');
+
+                if(attendBody) {
+                    attendBody.innerHTML += `<tr>
+                        <td><strong>${student.name}</strong></td>
+                        <td>${student.grade}</td>
+                        <td><span class="status-badge ${badgeClass}">${currentStatus}</span></td>
+                        <td>
+                            <button class="btn-action btn-p" onclick="markAttendance('${student.id}', 'حاضر')">حاضر</button>
+                            <button class="btn-action btn-a" onclick="markAttendance('${student.id}', 'غائب')">غائب</button>
+                        </td>
+                        <td><button class="btn-action btn-wa" onclick="sendWhatsAppNotice('${student.id}')">💬 واتساب</button></td>
+                    </tr>`;
+                }
+
+                if(selectMenu) selectMenu.innerHTML += `<option value="${student.id}">${student.name}</option>`;
+            });
+
+            document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
+            document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
+            document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
+        }
+
+        // تفعيل فوري للمزامنة في حال تم تسجيل الدخول مسبقاً
+        if (localStorage.getItem('amal_saved_pin')) {
+            window.initFirebaseSync();
+        }
+    </script>
+</body>
+</html>
