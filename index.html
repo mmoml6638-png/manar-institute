@@ -180,6 +180,7 @@
                 <button class="tab-btn active" onclick="switchTab('students-panel')">إدارة الطلاب</button>
                 <button class="tab-btn" onclick="switchTab('attendance-panel')">الغياب والواتساب</button>
                 <button class="tab-btn" onclick="switchTab('finance-panel')">الخزينة والحسابات</button>
+                <button class="tab-btn" id="teachers-tab" style="display: none; background-color: #f39c12; color: white;" onclick="switchTab('teachers-panel')">إدارة الأساتذة ⚙️</button>
             </div>
 
             <div id="students-panel" class="panel active">
@@ -282,84 +283,43 @@
                     <button type="submit" class="btn-submit">تأكيد وتحديث دفعة الحساب</button>
                 </form>
             </div>
+
+            <div id="teachers-panel" class="panel">
+                <h2>إضافة أستاذ جديد للنظام (صلاحية الآدمن)</h2>
+                <form id="teacher-form" onsubmit="addTeacher(event)">
+                    <div class="form-group">
+                        <label>اسم الأستاذ الكامل:</label>
+                        <input type="text" id="t-name" required placeholder="مثال: الأستاذة مروة السوداني">
+                    </div>
+                    <div class="form-group">
+                        <label>الرمز السري المخصص لتسجيل دخوله:</label>
+                        <input type="text" id="t-pin" required placeholder="مثال: Marwa2026">
+                    </div>
+                    <div class="form-group">
+                        <label>الصفوف المتاحة له (افصل بين الصفوف بفاصلة ,):</label>
+                        <input type="text" id="t-grades" required placeholder="مثال: السادس العلمي (إعدادية مروة), الثالث متوسط (متوسطة مروة)">
+                    </div>
+                    <button type="submit" class="btn-submit" style="background: #f39c12;">تأكيد وحفظ الأستاذ سحابياً</button>
+                </form>
+
+                <h2 style="margin-top: 25px;">قائمة الأساتذة النشطين في المنظومة</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الأستاذ</th>
+                                <th>الرمز السري الخاص به</th>
+                                <th>الصفوف التابعة له</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachers-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
-
-    <script>
-        const usersDatabase = {
-            "1234": { name: "المصمم العام", role: "admin", grades: ["السادس العلمي", "الثالث متوسط"] },
-            "Qasim901": { name: "الأستاذ قاسم محمد", role: "teacher", grades: ["السادس العلمي (إعدادية الأستاذ قاسم)", "الثالث متوسط (متوسطة الأستاذ قاسم)"] },
-            "Marwa2026": { name: "الأستاذة مروة السوداني", role: "teacher", grades: ["السادس العلمي (إعدادية الأستاذة مروة)", "الثالث متوسط (متوسطة الأستاذة مروة)"] },
-            "2023": { name: "الست زينة", role: "teacher", grades: ["الثالث متوسط (حساب الست زينة)"] }
-        };
-
-        let currentUserRole = "guest"; 
-        let currentUserGrades = [];
-
-        function verifyAccess() {
-            const pin = document.getElementById('secret-pin').value.trim();
-            if (usersDatabase[pin]) {
-                const user = usersDatabase[pin];
-                currentUserRole = user.role;
-                currentUserGrades = user.grades;
-
-                // حفظ الرمز السري في ذاكرة المتصفح/الهاتف لعدم طلبه مجدداً
-                localStorage.setItem('amal_saved_pin', pin);
-
-                document.getElementById('login-panel').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-
-                if (currentUserRole === "admin") {
-                    document.getElementById('teacher-tag').style.display = 'none';
-                    document.getElementById('user-welcome-msg').innerText = `مرحباً بك في لوحة تحكم تطبيق: ${user.name} 👑`;
-                } else {
-                    document.getElementById('teacher-tag').style.display = 'inline-block';
-                    document.getElementById('teacher-tag').innerText = `المدرس: ${user.name}`;
-                    document.getElementById('user-welcome-msg').innerText = `مرحباً، لديك كامل الصلاحيات لإدارة طلابك وماليتهم بمرونة.`;
-                }
-
-                const stGradeSelect = document.getElementById('st-grade');
-                stGradeSelect.innerHTML = ''; 
-                currentUserGrades.forEach(grade => {
-                    stGradeSelect.innerHTML += `<option value="${grade}">${grade}</option>`;
-                });
-
-                switchTab('students-panel');
-                
-                // تشغيل المزامنة السحابية إذا كانت محملة
-                if (window.initFirebaseSync) {
-                    window.initFirebaseSync();
-                }
-            } else {
-                alert("الرمز السري غير صحيح!");
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('amal_saved_pin');
-            document.getElementById('secret-pin').value = "";
-            document.getElementById('main-content').style.display = 'none';
-            document.getElementById('login-panel').style.display = 'flex';
-        }
-
-        function switchTab(panelId) {
-            document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(panelId).classList.add('active');
-            if(event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
-            }
-        }
-
-        // فحص تلقائي عند فتح الموقع: إذا كان مسجل دخول سابقاً يتم إدخاله فوراً
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedPin = localStorage.getItem('amal_saved_pin');
-            if (savedPin && usersDatabase[savedPin]) {
-                document.getElementById('secret-pin').value = savedPin;
-                verifyAccess();
-            }
-        });
-    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -379,11 +339,72 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // 🔐 تم تحديث حساب الآدمن الثابت هنا بالرمز الجديد بنجاح
+        const baseUsers = {
+            "moamel2006": { name: "المصمم العام", role: "admin", grades: ["السادس العلمي", "الثالث متوسط"] }
+        };
+        
+        let usersDatabase = { ...baseUsers };
         let localStudents = [];
         let currentDayAttendance = {}; 
+        let currentUserRole = "guest"; 
+        let currentUserGrades = [];
 
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('attendance-date').value = today;
+        const todayLocal = new Date().toLocaleDateString('en-CA');
+        document.getElementById('attendance-date').value = todayLocal;
+
+        window.verifyAccess = function() {
+            const pin = document.getElementById('secret-pin').value.trim();
+            if (usersDatabase[pin]) {
+                const user = usersDatabase[pin];
+                currentUserRole = user.role;
+                currentUserGrades = user.grades;
+
+                localStorage.setItem('amal_saved_pin', pin);
+
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+
+                if (currentUserRole === "admin") {
+                    document.getElementById('teachers-tab').style.display = 'block';
+                    document.getElementById('teacher-tag').style.display = 'none';
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً بك في لوحة تحكم تطبيق: ${user.name} 👑`;
+                } else {
+                    document.getElementById('teachers-tab').style.display = 'none';
+                    document.getElementById('teacher-tag').style.display = 'inline-block';
+                    document.getElementById('teacher-tag').innerText = `المدرس: ${user.name}`;
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً، لديك كامل الصلاحيات لإدارة طلابك وماليتهم بمرونة.`;
+                }
+
+                const stGradeSelect = document.getElementById('st-grade');
+                stGradeSelect.innerHTML = ''; 
+                currentUserGrades.forEach(grade => {
+                    stGradeSelect.innerHTML += `<option value="${grade}">${grade}</option>`;
+                });
+
+                switchTab('students-panel');
+                window.initFirebaseSync();
+            } else {
+                alert("الرمز السري غير صحيح أو لم يتم تفعيله بعد!");
+            }
+        };
+
+        window.logout = function() {
+            localStorage.removeItem('amal_saved_pin');
+            document.getElementById('secret-pin').value = "";
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('login-panel').style.display = 'flex';
+            document.getElementById('teachers-tab').style.display = 'none';
+        };
+
+        window.switchTab = function(panelId) {
+            document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            if(event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+        };
 
         window.initFirebaseSync = function() {
             onSnapshot(collection(db, "students"), (snapshot) => {
@@ -393,7 +414,68 @@
                 });
                 loadAttendanceForDate(); 
             });
-        }
+        };
+
+        onSnapshot(collection(db, "teachers"), (snapshot) => {
+            usersDatabase = { ...baseUsers }; 
+            const tBody = document.getElementById('teachers-table-body');
+            if (tBody) tBody.innerHTML = '';
+
+            snapshot.forEach((docSnap) => {
+                const tData = docSnap.data();
+                const tId = docSnap.id;
+
+                usersDatabase[tData.pin] = {
+                    name: tData.name,
+                    role: "teacher",
+                    grades: tData.grades
+                };
+
+                if (tBody) {
+                    tBody.innerHTML += `<tr>
+                        <td><strong>${tData.name}</strong></td>
+                        <td><span style="font-family:monospace; font-weight:bold; color:#f39c12;">${tData.pin}</span></td>
+                        <td>${tData.grades.join(' ، ')}</td>
+                        <td><button class="btn-action btn-del" onclick="deleteTeacher('${tId}')">حذف الأستاذ</button></td>
+                    </tr>`;
+                }
+            });
+            
+            if(currentUserRole !== "guest") renderAll();
+        });
+
+        window.addTeacher = async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('t-name').value.trim();
+            const pin = document.getElementById('t-pin').value.trim();
+            const gradesRaw = document.getElementById('t-grades').value;
+            const gradesArray = gradesRaw.split(',').map(g => g.trim()).filter(g => g !== '');
+
+            try {
+                document.getElementById('loading').style.display = 'flex';
+                await addDoc(collection(db, "teachers"), {
+                    name: name,
+                    pin: pin,
+                    grades: gradesArray
+                });
+                document.getElementById('teacher-form').reset();
+                alert("تم حفظ الأستاذ الجديد في السحابة وتفعيل حسابه فوراً!");
+            } catch(err) {
+                alert("فشل الحفظ: " + err.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        };
+
+        window.deleteTeacher = async function(id) {
+            if(confirm("هل أنت متأكد من حذف هذا الأستاذ وإلغاء صلاحية دخوله للمنظومة نهائياً؟")) {
+                try {
+                    await deleteDoc(doc(db, "teachers", id));
+                } catch(e) {
+                    alert("فشل الحذف");
+                }
+            }
+        };
 
         window.loadAttendanceForDate = async function() {
             const selectedDate = document.getElementById('attendance-date').value;
@@ -407,7 +489,7 @@
             } catch(e) {
                 console.error("Error loading data: ", e);
             }
-        } 
+        };
         
         window.addStudent = async function(e) {
             e.preventDefault();
@@ -426,7 +508,7 @@
             } finally {
                 document.getElementById('loading').style.display = 'none';
             }
-        }
+        };
 
         window.markAttendance = async function(studentId, status) {
             const selectedDate = document.getElementById('attendance-date').value;
@@ -437,7 +519,7 @@
             } catch (error) {
                 alert("فشل الحفظ: " + error.message);
             }
-        }
+        };
 
         window.sendWhatsAppNotice = function(studentId) {
             const student = localStudents.find(s => s.id === studentId);
@@ -456,7 +538,7 @@
                 : `تنبيه هام من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرة لتاريخ ${selectedDate}.`;
 
             window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank');
-        }
+        };
 
         window.collectPayment = async function(e) {
             e.preventDefault();
@@ -473,13 +555,13 @@
                     document.getElementById('payment-form').reset();
                 } catch (error) { alert("فشل الحفظ المالية"); } finally { document.getElementById('loading').style.display = 'none'; }
             }
-        }
+        };
 
         window.deleteStudent = async function(id) {
             if(confirm("هل أنت متأكد من حذف الطالب نهائياً؟")) {
                 try { await deleteDoc(doc(db, "students", id)); } catch (e) { alert("فشل الحذف"); }
             }
-        }
+        };
 
         window.renderAll = function() {
             const tableBody = document.getElementById('students-table-body');
@@ -526,18 +608,25 @@
                     </tr>`;
                 }
 
-                if(selectMenu) selectMenu.innerHTML += `<option value="${student.id}">${student.name}</option>`;
+                if(selectMenu) selectMenu.innerHTML += `<option value="${student.id}">${student.name} (المتبقي: ${remaining.toLocaleString()} د.ع)</option>`;
             });
 
             document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
             document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
             document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
-        }
+        };
 
-        // تفعيل فوري للمزامنة في حال تم تسجيل الدخول مسبقاً
-        if (localStorage.getItem('amal_saved_pin')) {
-            window.initFirebaseSync();
-        }
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedPin = localStorage.getItem('amal_saved_pin');
+            if (savedPin) {
+                setTimeout(() => {
+                    if (usersDatabase[savedPin]) {
+                        document.getElementById('secret-pin').value = savedPin;
+                        verifyAccess();
+                    }
+                }, 600);
+            }
+        });
     </script>
 </body>
 </html>
