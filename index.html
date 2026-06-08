@@ -204,11 +204,11 @@
                     </div>
                     <div class="form-group">
                         <label>مبلغ القسط الكلي (د.ع):</label>
-                        <input type="number" id="st-total-fee" required placeholder="اكتب مبلغ القسط الكلي هنا">
+                        <input type="text" id="st-total-fee" required placeholder="اكتب مبلغ القسط الكلي هنا" oninput="formatCurrencyInput(this)">
                     </div>
                     <div class="form-group">
                         <label>المبلغ المدفوع مقدماً (د.ع):</label>
-                        <input type="number" id="st-paid-fee" value="0" required>
+                        <input type="text" id="st-paid-fee" value="0" required oninput="formatCurrencyInput(this)">
                     </div>
                     <button type="submit" class="btn-submit">حفظ بيانات الطالب سحابياً</button>
                 </form> 
@@ -282,7 +282,7 @@
                     </div>
                     <div class="form-group">
                         <label>المبلغ المراد تسديده الآن (د.ع):</label>
-                        <input type="number" id="pay-amount" required placeholder="اكتب المبلغ المراد تسديده هنا">
+                        <input type="text" id="pay-amount" required placeholder="اكتب المبلغ المراد تسديده هنا" oninput="formatCurrencyInput(this)">
                     </div>
                     <button type="submit" class="btn-submit">تأكيد وتحديث دفعة الحساب</button>
                 </form>
@@ -343,7 +343,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // حساب الآدمن الأساسي برمزك moamel2006
         const baseUsers = {
             "moamel2006": { name: "المصمم العام", role: "admin", grades: ["ابتدائية", "متوسطة", "اعدادية"] }
         };
@@ -356,6 +355,24 @@
 
         const todayLocal = new Date().toLocaleDateString('en-CA');
         document.getElementById('attendance-date').value = todayLocal;
+
+        // 🌟 دالة مساعدة لتنسيق الأرقام بالفوارز تلقائياً داخل حقول الإدخال
+        window.formatCurrencyInput = function(input) {
+            let value = input.value.replace(/,/g, '');
+            if(!isNaN(value) && value !== '') {
+                input.value = Number(value).toLocaleString('en-US');
+            } else {
+                input.value = value.replace(/[^\d]/g, '');
+            }
+        };
+
+        // 🌟 دالة مساعدة لاستخراج الرقم الصافي الخالي من الفوارز لرفعه لقاعدة البيانات
+        function getCleanNumber(val) {
+            if(typeof val === 'string') {
+                return Number(val.replace(/,/g, '')) || 0;
+            }
+            return Number(val) || 0;
+        }
 
         window.verifyAccess = function() {
             const pin = document.getElementById('secret-pin').value.trim().toLowerCase();
@@ -379,8 +396,6 @@
                     document.getElementById('teacher-tag').innerText = `المدرس: ${user.name}`;
                     document.getElementById('user-welcome-msg').innerText = `مرحباً، لديك كامل الصلاحيات لإدارة طلابك وماليتهم بمرونة.`;
                 }
-
-                // 🌟 تم إيقاف كود مسح وتغيير الـ Dropdown هنا لكي تحافظ القائمة على اختياراتها كاملة (ابتدائية، متوسطة، اعدادية) بشكل دائم لجميع الحسابات بدون أي خلل.
 
                 switchTab('students-panel');
                 window.initFirebaseSync();
@@ -500,8 +515,9 @@
                     name: document.getElementById('st-name').value,
                     grade: document.getElementById('st-grade').value,
                     phone: document.getElementById('st-phone').value,
-                    totalFee: Number(document.getElementById('st-total-fee').value),
-                    paidFee: Number(document.getElementById('st-paid-fee').value)
+                    // 🌟 سحب الأرقام الصافية بدون فوارز لحفظها سحابياً بشكل صحيح
+                    totalFee: getCleanNumber(document.getElementById('st-total-fee').value),
+                    paidFee: getCleanNumber(document.getElementById('st-paid-fee').value)
                 });
                 document.getElementById('student-form').reset();
             } catch (error) {
@@ -544,7 +560,8 @@
         window.collectPayment = async function(e) {
             e.preventDefault();
             const studentId = document.getElementById('pay-student-select').value;
-            const amount = Number(document.getElementById('pay-amount').value);
+            // 🌟 تنظيف مبلغ الدفع الجديد من الفوارز قبل معالجته وحفظه
+            const amount = getCleanNumber(document.getElementById('pay-amount').value);
             const student = localStudents.find(s => s.id === studentId);
             
             if(student) {
@@ -576,7 +593,6 @@
             let totalExpected = 0, totalCollected = 0;
 
             localStudents.forEach(student => {
-                // الفلترة لضمان عرض الطلاب التابعين للمراحل المسموحة للمستخدم المفتوح حالياً
                 if (currentUserRole !== "admin" && (!currentUserGrades || !currentUserGrades.includes(student.grade))) return;
 
                 const remaining = student.totalFee - student.paidFee;
