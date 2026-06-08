@@ -356,7 +356,7 @@
         const todayLocal = new Date().toLocaleDateString('en-CA');
         document.getElementById('attendance-date').value = todayLocal;
 
-        // 🌟 دالة مساعدة لتنسيق الأرقام بالفوارز تلقائياً داخل حقول الإدخال
+        // دالة تنسيق الأرقام بالفوارز تلقائياً داخل حقول الإدخال
         window.formatCurrencyInput = function(input) {
             let value = input.value.replace(/,/g, '');
             if(!isNaN(value) && value !== '') {
@@ -366,7 +366,7 @@
             }
         };
 
-        // 🌟 دالة مساعدة لاستخراج الرقم الصافي الخالي من الفوارز لرفعه لقاعدة البيانات
+        // دالة تنظيف النص من الفوارز وتحويله لرقم حقيقي قبل الحفظ والعمليات الرياضية
         function getCleanNumber(val) {
             if(typeof val === 'string') {
                 return Number(val.replace(/,/g, '')) || 0;
@@ -515,11 +515,12 @@
                     name: document.getElementById('st-name').value,
                     grade: document.getElementById('st-grade').value,
                     phone: document.getElementById('st-phone').value,
-                    // 🌟 سحب الأرقام الصافية بدون فوارز لحفظها سحابياً بشكل صحيح
+                    // تم إصلاح السحب هنا لينظف النص من الفوارز قبل رفعه للـ Firebase
                     totalFee: getCleanNumber(document.getElementById('st-total-fee').value),
                     paidFee: getCleanNumber(document.getElementById('st-paid-fee').value)
                 });
                 document.getElementById('student-form').reset();
+                alert("تم حفظ بيانات الطالب سحابياً بنجاح!");
             } catch (error) {
                 alert("خطأ: " + error.message);
             } finally {
@@ -560,7 +561,7 @@
         window.collectPayment = async function(e) {
             e.preventDefault();
             const studentId = document.getElementById('pay-student-select').value;
-            // 🌟 تنظيف مبلغ الدفع الجديد من الفوارز قبل معالجته وحفظه
+            // تم إصلاح السحب هنا لينظف النص من الفوارز قبل المعالجة المالية والتسديد
             const amount = getCleanNumber(document.getElementById('pay-amount').value);
             const student = localStudents.find(s => s.id === studentId);
             
@@ -571,7 +572,8 @@
                     document.getElementById('loading').style.display = 'flex';
                     await updateDoc(doc(db, "students", studentId), { paidFee: newPaid });
                     document.getElementById('payment-form').reset();
-                } catch (error) { alert("فشل الحفظ المالية"); } finally { document.getElementById('loading').style.display = 'none'; }
+                    alert("تم تحديث الدفعة المالية بنجاح!");
+                } catch (error) { alert("فشل حفظ البيانات المالية"); } finally { document.getElementById('loading').style.display = 'none'; }
             }
         };
 
@@ -595,16 +597,21 @@
             localStudents.forEach(student => {
                 if (currentUserRole !== "admin" && (!currentUserGrades || !currentUserGrades.includes(student.grade))) return;
 
-                const remaining = student.totalFee - student.paidFee;
-                totalExpected += student.totalFee; totalCollected += student.paidFee;
+                // تحويل المبالغ المدخلة مسبقاً لأرقام نقية تحسباً لأي تضارب
+                const sTotalFee = getCleanNumber(student.totalFee);
+                const sPaidFee = getCleanNumber(student.paidFee);
+                const remaining = sTotalFee - sPaidFee;
+                
+                totalExpected += sTotalFee; 
+                totalCollected += sPaidFee;
 
                 if(tableBody) {
                     tableBody.innerHTML += `<tr>
                         <td><strong>${student.name}</strong></td>
                         <td>${student.grade}</td>
                         <td><span style="font-family:monospace;">${student.phone}</span></td>
-                        <td>${student.totalFee.toLocaleString()} د.ع</td>
-                        <td>${student.paidFee.toLocaleString()} د.ع</td>
+                        <td>${sTotalFee.toLocaleString()} د.ع</td>
+                        <td>${sPaidFee.toLocaleString()} د.ع</td>
                         <td style="color: ${remaining > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">${remaining.toLocaleString()} د.ع</td>
                         <td><button class="btn-action btn-del" onclick="deleteStudent('${student.id}')">حذف</button></td>
                     </tr>`;
