@@ -296,8 +296,8 @@
                         <input type="text" id="t-pin" required placeholder="اكتب الرمز السري هنا">
                     </div>
                     <div class="form-group">
-                        <label>المراحل المتاحة له (اختر من: ابتدائية، متوسطة، اعدادية وافصل بفاصلة ,):</label>
-                        <input type="text" id="t-grades" required placeholder="اكتب المراحل هنا مثل: ابتدائية, متوسطة, اعدادية">
+                        <label>المراحل المتاحة له (اكتب اسم الصف وافصل بين الصفوف بفاصلة ,):</label>
+                        <input type="text" id="t-grades" required placeholder="اكتب الصفوف هنا مثل: السادس العلمي (الخاصة بالأستاذ قاسم محمد), الثالث متوسط">
                     </div>
                     <button type="submit" class="btn-submit" style="background: #f39c12;">تأكيد وحفظ الأستاذ سحابياً</button>
                 </form>
@@ -340,10 +340,11 @@
         const db = getFirestore(app);
 
         const baseUsers = {
-            "moamel2006": { name: "المصمم العام", role: "admin", grades: ["ابتدائية", "متوسطة", "اعدادية"] }
+            "moamel2006": { name: "المصمم العام", role: "admin", grades: [] }
         };
         
         let usersDatabase = { ...baseUsers };
+        let allAvailableGrades = []; // تجميع كافة الفصول المخصصة بدون تكرار للآدمن
         let localStudents = [];
         let currentDayAttendance = {}; 
         let currentUserRole = "guest"; 
@@ -368,26 +369,31 @@
             return Number(val) || 0;
         }
 
+        // إعداد القائمة المنسدلة بناءً على الصلاحيات الفعلية للحساب النشط
         function setupGradeDropdown() {
             const gradeSelect = document.getElementById('st-grade');
             if (!gradeSelect) return;
             gradeSelect.innerHTML = '';
             
-            if(currentUserGrades && currentUserGrades.length > 0) {
-                currentUserGrades.forEach(grade => {
+            let listToRender = [];
+            if (currentUserRole === "admin") {
+                listToRender = allAvailableGrades.length > 0 ? allAvailableGrades : ["ابتدائية", "متوسطة", "اعدادية"];
+            } else {
+                listToRender = currentUserGrades && currentUserGrades.length > 0 ? currentUserGrades : [];
+            }
+
+            if(listToRender.length > 0) {
+                listToRender.forEach(grade => {
                     let opt = document.createElement('option');
                     opt.value = grade;
                     opt.innerText = grade;
                     gradeSelect.appendChild(opt);
                 });
             } else {
-                // حل احتياطي في حال تأخر تحميل قاعدة البيانات
-                ["ابتدائية", "متوسطة", "اعدادية"].forEach(grade => {
-                    let opt = document.createElement('option');
-                    opt.value = grade;
-                    opt.innerText = grade;
-                    gradeSelect.appendChild(opt);
-                });
+                let opt = document.createElement('option');
+                opt.value = "";
+                opt.innerText = "-- لا توجد صفوف مخصصة لحسابك --";
+                gradeSelect.appendChild(opt);
             }
         }
 
@@ -451,8 +457,10 @@
             });
         };
 
+        // تتبع المعلمين ومزامنتهم بشكل حيوي مع الحفاظ على القائمة مخصصة 100%
         onSnapshot(collection(db, "teachers"), (snapshot) => {
             usersDatabase = { ...baseUsers }; 
+            let collectedGrades = [];
             const tBody = document.getElementById('teachers-table-body');
             if (tBody) tBody.innerHTML = '';
 
@@ -463,26 +471,34 @@
                 usersDatabase[cleanPin] = {
                     name: tData.name,
                     role: "teacher",
-                    grades: tData.grades
+                    grades: tData.grades || []
                 };
+
+                if(tData.grades) {
+                    tData.grades.forEach(g => {
+                        if(!collectedGrades.includes(g)) collectedGrades.push(g);
+                    });
+                }
 
                 if (tBody) {
                     tBody.innerHTML += `<tr>
                         <td><strong>${tData.name}</strong></td>
                         <td><span style="font-family:monospace; font-weight:bold; color:#f39c12;">${tData.pin}</span></td>
-                        <td>${tData.grades.join(' ، ')}</td>
+                        <td>${tData.grades ? tData.grades.join(' ، ') : ''}</td>
                         <td><button class="btn-action btn-del" onclick="deleteTeacher('${docSnap.id}')">حذف الأستاذ</button></td>
                     </tr>`;
                 }
             });
             
-            // تم إصلاح التحديث هنا لكي لا يقوم بمسح صلاحيات الحساب الحالي المفتوح
+            allAvailableGrades = collectedGrades;
+
+            // تحديث الحساب النشط فورياً لضمان قراءة البيانات التفصيلية بدون تصفير
             if(currentUserRole !== "guest") {
                 const savedPin = localStorage.getItem('amal_saved_pin');
                 if (savedPin && usersDatabase[savedPin.trim().toLowerCase()]) {
                     currentUserGrades = usersDatabase[savedPin.trim().toLowerCase()].grades;
-                    setupGradeDropdown();
                 }
+                setupGradeDropdown();
                 renderAll();
             }
         });
@@ -502,7 +518,7 @@
                     grades: gradesArray
                 });
                 document.getElementById('teacher-form').reset();
-                alert("تم حفظ الأستاذ الجديد وتفعيل حسابه فوراً!");
+                alert("تم حفظ الأستاذ الجديد وتفعيل حسابه فوراً بالصفوف المخصصة!");
             } catch(err) {
                 alert("خطأ في الحفظ: " + err.message);
             } finally {
@@ -539,7 +555,7 @@
             const chosenGrade = document.getElementById('st-grade').value;
             
             if(!chosenGrade) {
-                alert("خطأ: يرجى تحديد المرحلة الدراسية!");
+                alert("خطأ: يرجى تحديد الصف أو المرحلة الدراسية المتاحة!");
                 return;
             }
 
@@ -554,7 +570,7 @@
                 });
                 document.getElementById('student-form').reset();
                 setupGradeDropdown(); 
-                alert("تم حفظ بيانات الطالب سحابياً بنجاح!");
+                alert("تم حفظ بيانات الطالب سحابياً بنجاح تحت المرحلة المختارة!");
             } catch (error) {
                 alert("خطأ: " + error.message);
             } finally {
@@ -628,6 +644,7 @@
             let totalExpected = 0, totalCollected = 0;
 
             localStudents.forEach(student => {
+                // الفلترة للتأكد من عرض الصفوف المرتبطة والمخصصة للأستاذ الحالي فقط
                 if (currentUserRole !== "admin" && (!currentUserGrades || !currentUserGrades.includes(student.grade))) return;
 
                 const sTotalFee = getCleanNumber(student.totalFee);
