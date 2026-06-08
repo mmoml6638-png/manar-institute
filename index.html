@@ -8,14 +8,14 @@
     <!-- إعدادات تحويل الموقع إلى تطبيق ويب تقدمي PWA على الآيفون بالاسم الجديد والأيقونة المخصصة -->
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#1a252f">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#b9d5e3">
     <meta name="apple-mobile-web-app-title" content="أمل">
     <link rel="apple-touch-icon" href="https://img.icons8.com/?size=192&id=103366&format=png&color=2C3E50">
 
     <style>
         :root {
-            --primary-color: #1a252f;      /* أزرق داكن فاخر */
-            --secondary-color: #d4af37;    /* لمسة ذهبية ملكية */
+            --primary-color: #4a6b82;      /* لون متناسق مع واجهتك الجديدة */
+            --secondary-color: #d4af37;    
             --accent-color: #34495e;       
             --success-color: #2ecc71;
             --danger-color: #e74c3c;
@@ -27,41 +27,41 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0; padding: 0;
-            background: linear-gradient(135deg, #f4f7f6 0%, #e2ebf0 100%);
+            background: linear-gradient(135deg, #b9d5e3 0%, #f7e5d9 100%);
             color: var(--dark-text);
         }
 
-        /* شاشة تسجيل الدخول بالخلفية الفخمة المخصصة من اختيارك */
+        /* شاشة تسجيل الدخول المعدلة بالكامل لتظهر صورتك بوسط الشاشة وبأبعاد حقيقية */
         .login-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://images.vfl.ru/ii/1717859492/684c3e80/38600588.png') no-repeat center center;
-            background-size: cover;
+            background: #b9d5e3 url('https://i.ibb.co/6RFF2X6v/image-33.png') no-repeat center center;
+            background-size: contain; /* تضمن ظهور شعارك كاملاً بدون قص أو تمطيط */
             display: flex; justify-content: center; align-items: center;
             z-index: 10000;
         }
 
-        /* صندوق تسجيل دخول شفاف يبرز جمالية الخلفية والاتزان */
+        /* صندوق تسجيل الدخول الشفاف والمتموضع بدقة فوق الخلفية */
         .login-box {
-            background: rgba(255, 255, 255, 0.85); padding: 40px; border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            text-align: center; max-width: 380px; width: 90%;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.82); padding: 35px 25px; border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(74, 107, 130, 0.2);
+            text-align: center; max-width: 340px; width: 85%;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            margin-top: 120px; /* دفع الصندوق لأسفل الشعار قليلاً لكي لا يغطيه */
         }
 
         .login-box h2 {
-            color: #4a6b82;
-            font-size: 30px;
+            color: #3a5568;
+            font-size: 26px;
             font-weight: 800;
-            margin-bottom: 5px;
-            letter-spacing: 0.5px;
+            margin: 0 0 5px 0;
         }
 
         /* الهيدر الرئيسي للتطبيق */
         .header {
-            background: linear-gradient(135deg, #1a252f, #2c3e50);
+            background: linear-gradient(135deg, #4a6b82, #2c3e50);
             color: white; padding: 25px 20px; text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             border-bottom: 3px solid var(--secondary-color);
@@ -77,7 +77,7 @@
 
         .teacher-badge-header {
             background-color: var(--secondary-color);
-            color: var(--primary-color); padding: 6px 20px; border-radius: 20px;
+            color: #2c3e50; padding: 6px 20px; border-radius: 20px;
             display: inline-block; font-size: 14px; margin-top: 10px; font-weight: bold;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
@@ -93,16 +93,16 @@
         .tab-btn {
             padding: 12px 25px; font-size: 16px; font-weight: bold;
             cursor: pointer; border: none; border-radius: 10px;
-            background-color: white; color: var(--primary-color);
+            background-color: white; color: #4a6b82;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: all 0.3s;
             border: 1px solid rgba(0,0,0,0.05);
         }
 
         .tab-btn.active, .tab-btn:hover {
-            background-color: var(--primary-color); color: #fff;
-            border-color: var(--primary-color);
+            background-color: #4a6b82; color: #fff;
+            border-color: #4a6b82;
             transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(26, 37, 47, 0.2);
+            box-shadow: 0 6px 12px rgba(74, 107, 130, 0.2);
         }
 
         .panel {
@@ -114,7 +114,7 @@
         .panel.active { display: block; }
 
         h2 {
-            color: var(--primary-color); border-bottom: 2px solid #f1f3f5;
+            color: #4a6b82; border-bottom: 2px solid #f1f3f5;
             padding-bottom: 12px; margin-top: 0; font-weight: 700;
         }
 
@@ -127,15 +127,15 @@
             transition: all 0.2s; background-color: #f8fafc;
         }
         input:focus, select:focus {
-            border-color: var(--primary-color);
+            border-color: #4a6b82;
             background-color: #fff;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(26, 37, 47, 0.1);
+            box-shadow: 0 0 0 3px rgba(74, 107, 130, 0.1);
         }
 
         .date-picker-box {
             background: #f0f4f8; padding: 15px; border-radius: 10px;
-            margin-bottom: 25px; border-right: 5px solid var(--primary-color);
+            margin-bottom: 25px; border-right: 5px solid #4a6b82;
         }
 
         button.btn-submit {
@@ -157,7 +157,7 @@
 
         .stat-card {
             background: #fff; padding: 25px; border-radius: 12px;
-            text-align: center; border-top: 4px solid var(--primary-color);
+            text-align: center; border-top: 4px solid #4a6b82;
             box-shadow: 0 4px 10px rgba(0,0,0,0.02);
         }
         .stat-card.success { border-top-color: var(--success-color); }
@@ -167,7 +167,7 @@
 
         table { width: 100%; border-collapse: collapse; margin-top: 25px; }
         th, td { padding: 14px; text-align: right; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-        th { background-color: #f8fafc; color: var(--primary-color); font-weight: 700; }
+        th { background-color: #f8fafc; color: #4a6b82; font-weight: 700; }
 
         .status-badge { padding: 5px 10px; border-radius: 6px; font-size: 13px; font-weight: bold; }
         .status-present { background-color: #d4edda; color: #155724; }
@@ -185,7 +185,7 @@
         .loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.85); display: flex; justify-content: center;
-            align-items: center; font-size: 20px; font-weight: bold; color: var(--primary-color);
+            align-items: center; font-size: 20px; font-weight: bold; color: #4a6b82;
             z-index: 9999; backdrop-filter: blur(5px);
         }
 
@@ -202,13 +202,13 @@
 </head>
 <body>
 
-    <!-- شاشة تسجيل الدخول بخلفيتك المذهلة -->
+    <!-- شاشة تسجيل الدخول المعدلة بالخلفية المضمونة والثابتة -->
     <div id="login-panel" class="login-screen">
         <div class="login-box">
             <h2>تطبيق أمل</h2>
-            <p style="color: #64748b; margin-bottom: 25px; font-size: 14px; font-weight: 500;">يرجى كتابة رمز التحقق والوصول المخصص لك</p>
-            <input type="password" id="secret-pin" placeholder="الرمز السري الخاص بك" style="text-align: center; font-size: 18px; margin-bottom: 20px; border-radius: 12px; background: #fff; border: 1px solid #cbd5e1;"><br><br>
-            <button class="btn-submit" style="background: linear-gradient(135deg, #4a6b82, #2c3e50); box-shadow: 0 4px 12px rgba(44,62,80,0.25);" onclick="verifyAccess()">تسجيل الدخول الآمن</button>
+            <p style="color: #64748b; margin-bottom: 20px; font-size: 14px; font-weight: 500;">يرجى كتابة رمز التحقق المخصص لك</p>
+            <input type="password" id="secret-pin" placeholder="الرمز السري الخاص بك" style="text-align: center; font-size: 18px; margin-bottom: 15px; border-radius: 12px; background: #fff; border: 1px solid #cbd5e1;"><br><br>
+            <button class="btn-submit" style="background: linear-gradient(135deg, #4a6b82, #2c3e50); box-shadow: 0 4px 12px rgba(74,107,130,0.25);" onclick="verifyAccess()">تسجيل الدخول الآمن</button>
         </div>
     </div>
 
@@ -282,8 +282,8 @@
             <!-- 2. لوحة الغياب والتحضير -->
             <div id="attendance-panel" class="panel">
                 <div class="date-picker-box">
-                    <label style="color: var(--primary-color); font-size: 16px;">اختر تاريخ اليوم المراد رصده أو مراجعته:</label>
-                    <input type="date" id="attendance-date" style="max-width: 250px; font-weight: bold; color: var(--primary-color);" onchange="loadAttendanceForDate()">
+                    <label style="color: #4a6b82; font-size: 16px;">اختر تاريخ اليوم المراد رصده أو مراجعته:</label>
+                    <input type="date" id="attendance-date" style="max-width: 250px; font-weight: bold; color: #4a6b82;" onchange="loadAttendanceForDate()">
                 </div>
 
                 <h2 id="attendance-title">رصد الحضور وإشعارات أولياء الأمور</h2>
@@ -333,7 +333,7 @@
                         <label>المبلغ المراد تسديده الآن (د.ع):</label>
                         <input type="number" id="pay-amount" required placeholder="مثال: 50000">
                     </div>
-                    <button type="submit" class="btn-submit" style="background-color: var(--primary-color); box-shadow: 0 4px 6px rgba(26,37,47,0.2);">تأكيد وتحديث دفعة الحساب</button>
+                    <button type="submit" class="btn-submit" style="background-color: #4a6b82; box-shadow: 0 4px 6px rgba(74, 107, 130, 0.2);">تأكيد وتحديث دفعة الحساب</button>
                 </form>
             </div>
         </div>
