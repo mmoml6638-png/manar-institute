@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أمل</title>
 
-    <!-- إعدادات تحويل الموقع إلى تطبيق ويب تقدمي PWA على الآيفون بالاسم الجديد والأيقونة الفاخرة -->
+    <!-- إعدادات تحويل الموقع إلى تطبيق ويب تقدمي PWA على الآيفون بالاسم الجديد والأيقونة المخصصة -->
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="#1a252f">
@@ -14,9 +14,9 @@
 
     <style>
         :root {
-            --primary-color: #1a252f;      /* أزرق داكن فاخر جداً */
+            --primary-color: #1a252f;      /* أزرق داكن فاخر */
             --secondary-color: #d4af37;    /* لمسة ذهبية ملكية */
-            --accent-color: #34495e;       /* رمادي داكن متناسق */
+            --accent-color: #34495e;       
             --success-color: #2ecc71;
             --danger-color: #e74c3c;
             --whatsapp-color: #25D366;
@@ -27,34 +27,36 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0; padding: 0;
-            /* خلفية متدرجة أنيقة جداً ومريحة للعين */
             background: linear-gradient(135deg, #f4f7f6 0%, #e2ebf0 100%);
             color: var(--dark-text);
         }
 
-        /* شاشة تسجيل الدخول بتصميم ملكي ساحر */
+        /* شاشة تسجيل الدخول بالخلفية الفخمة المخصصة من اختيارك */
         .login-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #2c3e50 0%, #1a252f 100%);
+            background: url('https://images.vfl.ru/ii/1717859492/684c3e80/38600588.png') no-repeat center center;
+            background-size: cover;
             display: flex; justify-content: center; align-items: center;
             z-index: 10000;
         }
 
+        /* صندوق تسجيل دخول شفاف يبرز جمالية الخلفية والاتزان */
         .login-box {
-            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            text-align: center; max-width: 400px; width: 90%;
-            border-top: 5px solid var(--secondary-color);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.85); padding: 40px; border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            text-align: center; max-width: 380px; width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
         }
 
         .login-box h2 {
-            color: var(--primary-color);
-            font-size: 28px;
+            color: #4a6b82;
+            font-size: 30px;
             font-weight: 800;
-            letter-spacing: 1px;
             margin-bottom: 5px;
+            letter-spacing: 0.5px;
         }
 
         /* الهيدر الرئيسي للتطبيق */
@@ -200,13 +202,13 @@
 </head>
 <body>
 
-    <!-- شاشة تسجيل الدخول بالرموز السرية للمدرسين والمدير -->
+    <!-- شاشة تسجيل الدخول بخلفيتك المذهلة -->
     <div id="login-panel" class="login-screen">
         <div class="login-box">
             <h2>تطبيق أمل</h2>
-            <p style="color: #64748b; margin-bottom: 25px; font-size: 15px;">الرجاء إدخال رمز الدخول المخصص لك</p>
-            <input type="password" id="secret-pin" placeholder="أدخل الرمز السري هنا" style="text-align: center; font-size: 20px; margin-bottom: 25px; border-radius: 12px;"><br><br>
-            <button class="btn-submit" style="background-color: var(--primary-color); box-shadow: 0 4px 10px rgba(26,37,47,0.3);" onclick="verifyAccess()">تسجيل الدخول الآمن</button>
+            <p style="color: #64748b; margin-bottom: 25px; font-size: 14px; font-weight: 500;">يرجى كتابة رمز التحقق والوصول المخصص لك</p>
+            <input type="password" id="secret-pin" placeholder="الرمز السري الخاص بك" style="text-align: center; font-size: 18px; margin-bottom: 20px; border-radius: 12px; background: #fff; border: 1px solid #cbd5e1;"><br><br>
+            <button class="btn-submit" style="background: linear-gradient(135deg, #4a6b82, #2c3e50); box-shadow: 0 4px 12px rgba(44,62,80,0.25);" onclick="verifyAccess()">تسجيل الدخول الآمن</button>
         </div>
     </div>
 
@@ -222,7 +224,6 @@
         </div>
 
         <div class="container">
-            <!-- شريط الأقسام الموحد بلمسة أنيقة -->
             <div class="tabs" id="main-tabs">
                 <button class="tab-btn active" onclick="switchTab('students-panel')">إدارة الطلاب</button>
                 <button class="tab-btn" onclick="switchTab('attendance-panel')">تسجيل الغياب والواتساب</button>
@@ -363,7 +364,6 @@
         let currentUserRole = "guest"; 
         let targetGrade = "all";       
 
-        // قاعدة الرموز السرية
         const usersDatabase = {
             "1234": { name: "المصمم العام", role: "admin", grade: "all" },
             "Qasim901": { name: "الأستاذ قاسم محمد", role: "teacher", grade: "السادس العلمي" },
@@ -396,7 +396,7 @@
                 switchTab('students-panel');
                 startRealtimeSync();
             } else {
-                alert("الرمز السري غير صحيح! يرجى إدخال الرمز المخصص لك كمدرس أو مصمم.");
+                alert("الرمز السري غير صحيح!");
             }
         }
 
@@ -476,7 +476,7 @@
 
             if (!student) return;
             if (status === "غير مرصود بعد") {
-                alert("يرجى رصد حالة الطالب (حاضر أو غائب) أولاً قبل إرسال الرسالة!");
+                alert("يرجى رصد حالة الطالب أولاً!");
                 return;
             }
 
@@ -487,9 +487,9 @@
 
             let message = "";
             if (status === "حاضر") {
-                message = `تحية طيبة من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المحاضرة المقررة لتاريخ ${selectedDate} وتلقى دروسه بانتظام.\n\nنتمنى له التوفيق والنجاح الدائم.`;
+                message = `تحية طيبة من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المحاضرة المقررة لتاريخ ${selectedDate}.\n\nنتمنى له التوفيق والنجاح الدائم.`;
             } else if (status === "غائب") {
-                message = `تنبيه هام من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرات المقررة لهذا اليوم ${selectedDate}.\n\nيرجى التواصل مع المدرس لتوضيح سبب الغياب لضمان عدم تأخره في المادة.`;
+                message = `تنبيه هام من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرات المقررة لهذا اليوم ${selectedDate}.\n\nيرجى التواصل مع المدرس لتوضيح سبب الغياب.`;
             }
 
             const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
