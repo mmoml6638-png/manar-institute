@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="#1a252f">
     <meta name="apple-mobile-web-app-title" content="أمل">
-    <link rel="apple-touch-icon" href="https://img.icons8.com/?size=192&id=103366&format=png&color=2C3E50">
+    <link class="no-print" rel="apple-touch-icon" href="https://img.icons8.com/?size=192&id=103366&format=png&color=2C3E50">
 
     <style>
         :root {
@@ -96,6 +96,11 @@
 
         h2 { color: var(--primary-color); border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 10px; margin-top: 0; font-weight: 700; font-size: 18px; }
 
+        .panel-header-actions {
+            display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 10px; margin-bottom: 15px;
+        }
+        .panel-header-actions h2 { border-bottom: none; margin: 0; padding-bottom: 0; }
+
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; color: #4a5568; font-size: 14px; }
 
@@ -111,6 +116,11 @@
             background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white;
             border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; font-size: 15px; font-weight: bold; width: 100%; transition: all 0.2s;
         }
+
+        .btn-print {
+            background-color: #2980b9; color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .btn-print:hover { background-color: var(--primary-color); transform: translateY(-1px); }
 
         .stats-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
         @media(min-width: 600px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -161,7 +171,7 @@
             <h2>منظومة إدارة التعليم الذكي</h2>
             <p style="color: #64748b; margin-bottom: 20px; font-size: 13px; font-weight: 500;">يرجى كتابة رمز الوصول المخصص لك</p>
             <input type="password" id="secret-pin" placeholder="الرمز السري الخاص بك" style="text-align: center; font-size: 18px; margin-bottom: 15px;"><br>
-            <button class="btn-submit" onclick="verifyAccess()">تسجيل الدخول الآمن</button>
+            <button type="button" class="btn-submit" onclick="verifyAccess()">تسجيل الدخول الآمن</button>
         </div>
     </div>
 
@@ -177,12 +187,13 @@
 
         <div class="container">
             <div class="tabs" id="main-tabs">
-                <button class="tab-btn active" onclick="switchTab('students-panel')">إدارة الطلاب</button>
-                <button class="tab-btn" onclick="switchTab('attendance-panel')">الغياب والواتساب</button>
-                <button class="tab-btn" onclick="switchTab('finance-panel')">الخزينة والحسابات</button>
-                <button class="tab-btn" id="teachers-tab" style="display: none; background-color: #f39c12; color: white;" onclick="switchTab('teachers-panel')">إدارة الأساتذة ⚙️</button>
+                <button class="tab-btn active" onclick="switchTab(event, 'students-panel')">إدارة الطلاب</button>
+                <button class="tab-btn" onclick="switchTab(event, 'attendance-panel')">الغياب والواتساب</button>
+                <button class="tab-btn" onclick="switchTab(event, 'finance-panel')">الخزينة والحسابات</button>
+                <button class="tab-btn" id="teachers-tab" style="display: none; background-color: #f39c12; color: white;" onclick="switchTab(event, 'teachers-panel')">إدارة الأساتذة ⚙️</button>
             </div>
 
+            <!-- قسم إدارة الطلاب -->
             <div id="students-panel" class="panel active">
                 <h2>تسجيل طالب جديد في التطبيق</h2>
                 <form id="student-form" onsubmit="addStudent(event)">
@@ -209,8 +220,11 @@
                     <button type="submit" class="btn-submit">حفظ بيانات الطالب سحابياً</button>
                 </form> 
                 
-                <h2 style="margin-top: 25px;">قائمة الطلاب المسجلين</h2>
-                <div class="table-responsive">
+                <div class="panel-header-actions" style="margin-top: 25px;">
+                    <h2>قائمة الطلاب المسجلين</h2>
+                    <button class="btn-print" onclick="printIsolatedSection('print-students-area', 'سجل الطلاب والبيانات العامة')">🖨️ طباعة السجل الرسمي</button>
+                </div>
+                <div class="table-responsive" id="print-students-area">
                     <table>
                         <thead>
                             <tr>
@@ -220,7 +234,6 @@
                                 <th>القسط الكلي</th>
                                 <th>المدفوع</th>
                                 <th>المتبقي</th>
-                                <th>إجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="students-table-body"></tbody>
@@ -228,22 +241,24 @@
                 </div>
             </div>
 
+            <!-- قسم الغياب والواتساب -->
             <div id="attendance-panel" class="panel">
                 <div class="date-picker-box">
                     <label style="color: var(--primary-color); font-size: 14px; margin-bottom:8px;">اختر تاريخ اليوم المراد رصده:</label>
                     <input type="date" id="attendance-date" style="max-width: 100%; font-weight: bold;" onchange="loadAttendanceForDate()">
                 </div>
 
-                <h2 id="attendance-title">رصد الحضور وإشعارات أولياء الأمور</h2>
-                <div class="table-responsive">
+                <div class="panel-header-actions">
+                    <h2 id="attendance-title">رصد الحضور وإشعارات أولياء الأمور</h2>
+                    <button class="btn-print" onclick="printIsolatedSection('print-attendance-area', 'تقرير غياب وحضور الطلاب اليومي')">🖨️ طباعة ورقة الغياب اليومية</button>
+                </div>
+                <div class="table-responsive" id="print-attendance-area">
                     <table>
                         <thead>
                             <tr>
                                 <th>اسم الطالب</th>
                                 <th>الصف</th>
-                                <th>الحالة</th>
-                                <th>رصد الحالة</th>
-                                <th>إشعار فوري</th>
+                                <th>الحالة المرصودة</th>
                             </tr>
                         </thead>
                         <tbody id="attendance-table-body"></tbody>
@@ -251,20 +266,27 @@
                 </div>
             </div>
 
+            <!-- قسم المادية والخزينة -->
             <div id="finance-panel" class="panel">
-                <h2>التقرير المالي العام</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div>الإيرادات المتوقعة</div>
-                        <div class="stat-number" id="fin-total-expected">0 د.ع</div>
-                    </div>
-                    <div class="stat-card success">
-                        <div>المبالغ المستلمة (الخزينة)</div>
-                        <div class="stat-number" id="fin-total-collected">0 د.ع</div>
-                    </div>
-                    <div class="stat-card danger">
-                        <div>الديون المتبقية</div>
-                        <div class="stat-number" id="fin-total-remaining">0 د.ع</div>
+                <div class="panel-header-actions">
+                    <h2>التقرير المالي العام</h2>
+                    <button class="btn-print" onclick="printIsolatedSection('print-finance-area', 'الموقف المالي العام وإحصائيات الخزينة')">🖨️ طباعة كشف الحسابات</button>
+                </div>
+                
+                <div id="print-finance-area">
+                    <div class="stats-grid">
+                        <div class="stat-card" style="border-top: 4px solid #2c3e50;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">الإيرادات المتوقعة</div>
+                            <div class="stat-number" id="fin-total-expected">0 د.ع</div>
+                        </div>
+                        <div class="stat-card success" style="border-top: 4px solid #2ecc71;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">المبالغ المستلمة (الخزينة)</div>
+                            <div class="stat-number" id="fin-total-collected">0 د.ع</div>
+                        </div>
+                        <div class="stat-card danger" style="border-top: 4px solid #e74c3c;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">الديون المتبقية للطلاب</div>
+                            <div class="stat-number" id="fin-total-remaining">0 د.ع</div>
+                        </div>
                     </div>
                 </div>
 
@@ -284,6 +306,7 @@
                 </form>
             </div>
 
+            <!-- قسم المدرسين والآدمن -->
             <div id="teachers-panel" class="panel">
                 <h2>إضافة أستاذ جديد للنظام (صلاحية الآدمن)</h2>
                 <form id="teacher-form" onsubmit="addTeacher(event)">
@@ -302,7 +325,9 @@
                     <button type="submit" class="btn-submit" style="background: #f39c12;">تأكيد وحفظ الأستاذ سحابياً</button>
                 </form>
 
-                <h2 style="margin-top: 25px;">قائمة الأساتذة النشطين في المنظومة</h2>
+                <div class="panel-header-actions" style="margin-top: 25px;">
+                    <h2>قائمة الأساتذة النشطين في المنظومة</h2>
+                </div>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -340,7 +365,7 @@
         const db = getFirestore(app);
 
         const baseUsers = {
-            "moamel2006": { name: "المصمم العام", role: "admin", grades: [] }
+            "moamel2006": { name: "المصمم العام", role: "admin", grades: ["ابتدائية", "متوسطة", "اعدادية"] }
         };
         
         let usersDatabase = { ...baseUsers };
@@ -352,6 +377,49 @@
 
         const todayLocal = new Date().toLocaleDateString('en-CA');
         document.getElementById('attendance-date').value = todayLocal;
+
+        window.printIsolatedSection = function(elementId, reportTitle) {
+            const printElement = document.getElementById(elementId);
+            if (!printElement) return;
+
+            const printWindow = window.open('', '_blank', 'height=600,width=800');
+            
+            printWindow.document.write(`
+                <html lang="ar" dir="rtl">
+                <head>
+                    <title>${reportTitle}</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 30px; background: #fff; color: #000; direction: rtl; }
+                        .print-header { text-align: center; margin-bottom: 30px; border-bottom: 3px double #000; padding-bottom: 15px; }
+                        .print-header h1 { margin: 0; font-size: 26px; color: #2c3e50; }
+                        .print-header p { margin: 5px 0 0 0; font-size: 14px; color: #555; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                        th, td { border: 1px solid #000; padding: 10px 8px; text-align: right; font-size: 13px; }
+                        th { background-color: #f2f2f2 !important; font-weight: bold; }
+                        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+                        .stat-card { border: 1px solid #000; padding: 15px; text-align: center; border-radius: 6px; background: #fafafa; }
+                        .stat-number { font-size: 18px; font-weight: bold; margin-top: 5px; }
+                        .no-print, button, form { display: none !important; }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-header">
+                        <h1>منظومة أَمَل التعليمية لإدارة التعليم الذكي</h1>
+                        <p>${reportTitle} - تاريخ الاستخراج: ${new Date().toLocaleDateString('ar-EG')}</p>
+                    </div>
+                    ${printElement.innerHTML}
+                </body>
+                </html>
+            `);
+
+            printWindow.document.close();
+            printWindow.focus();
+            
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 600);
+        };
 
         window.formatCurrencyInput = function(input) {
             let value = input.value.replace(/,/g, '');
@@ -374,9 +442,17 @@
             if (!gradeSelect) return;
             gradeSelect.innerHTML = '';
             
-            const fixedGrades = ["ابتدائية", "متوسطة", "اعدادية"];
+            const targetGrades = currentUserRole === "admin" ? ["ابتدائية", "متوسطة", "اعدادية"] : currentUserGrades;
 
-            fixedGrades.forEach(grade => {
+            if(targetGrades.length === 0) {
+                let opt = document.createElement('option');
+                opt.value = "";
+                opt.innerText = "لا توجد مراحل مخصصة لحسابك";
+                gradeSelect.appendChild(opt);
+                return;
+            }
+
+            targetGrades.forEach(grade => {
                 let opt = document.createElement('option');
                 opt.value = grade;
                 opt.innerText = grade;
@@ -385,7 +461,10 @@
         }
 
         window.verifyAccess = function() {
-            const pin = document.getElementById('secret-pin').value.trim().toLowerCase();
+            const pinElement = document.getElementById('secret-pin');
+            if (!pinElement) return;
+            
+            const pin = pinElement.value.trim().toLowerCase();
             if (usersDatabase[pin]) {
                 const user = usersDatabase[pin];
                 currentUserRole = user.role;
@@ -408,7 +487,9 @@
                 }
 
                 setupGradeDropdown(); 
-                switchTab('students-panel');
+                
+                // تمرير حدث وهمي لتفادي توقف الدالة بالمتصفحات الحديثة
+                switchTab(null, 'students-panel');
                 window.initFirebaseSync();
             } else {
                 alert("الرمز السري غير صحيح أو لم يتم تفعيله بعد!");
@@ -425,12 +506,18 @@
             currentUserGrades = [];
         };
 
-        window.switchTab = function(panelId) {
+        window.switchTab = function(event, panelId) {
             document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
             document.getElementById(panelId).classList.add('active');
+            
             if(event && event.currentTarget) {
                 event.currentTarget.classList.add('active');
+            } else {
+                // تفعيل التبويب الأول برمجياً إذا لم يكن هناك حدث حقيقي للمستخدم
+                const firstTab = document.querySelector('.tab-btn');
+                if(firstTab) firstTab.classList.add('active');
             }
         };
 
@@ -563,7 +650,6 @@
                     paidFee: getCleanNumber(document.getElementById('st-paid-fee').value)
                 });
                 document.getElementById('student-form').reset();
-                setupGradeDropdown(); 
                 alert("تم حفظ بيانات الطالب سحابياً بنجاح تحت المرحلة المختارة!");
             } catch (error) {
                 alert("خطأ: " + error.message);
@@ -655,12 +741,8 @@
                         <td>${sTotalFee.toLocaleString()} د.ع</td>
                         <td>${sPaidFee.toLocaleString()} د.ع</td>
                         <td style="color: ${remaining > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">${remaining.toLocaleString()} د.ع</td>
-                        <td><button class="btn-action btn-del" onclick="deleteStudent('${student.id}')">حذف</button></td>
+                        <td class="no-print"><button class="btn-action btn-del" onclick="deleteStudent('${student.id}')">حذف</button></td>
                     </tr>`;
-                }
-
-                if(selectMenu) {
-                    selectMenu.innerHTML += `<option value="${student.id}">${student.name} [${student.grade}]</option>`;
                 }
 
                 const currentStatus = currentDayAttendance[student.id] || "غير مرصود بعد";
@@ -671,21 +753,36 @@
                         <td><strong>${student.name}</strong></td>
                         <td>${student.grade}</td>
                         <td><span class="status-badge ${badgeClass}">${currentStatus}</span></td>
-                        <td>
+                        <td class="no-print">
                             <button class="btn-action btn-p" onclick="markAttendance('${student.id}', 'حاضر')">حاضر</button>
                             <button class="btn-action btn-a" onclick="markAttendance('${student.id}', 'غائب')">غائب</button>
                         </td>
-                        <td>
-                            <button class="btn-action btn-wa" onclick="sendWhatsAppNotice('${student.id}')">إرسال واتساب 📱</button>
+                        <td class="no-print">
+                            <button class="btn-action btn-wa" onclick="sendWhatsAppNotice('${student.id}')">
+                                🟢 واتساب
+                            </button>
                         </td>
                     </tr>`;
                 }
+
+                if(selectMenu) {
+                    selectMenu.innerHTML += `<option value="${student.id}">${student.name} (${student.grade}) - المتبقي: ${remaining.toLocaleString()} د.ع</option>`;
+                }
             });
 
+            const remainingTotal = totalExpected - totalCollected;
             if(document.getElementById('fin-total-expected')) document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
             if(document.getElementById('fin-total-collected')) document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
-            if(document.getElementById('fin-total-remaining')) document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
+            if(document.getElementById('fin-total-remaining')) {
+                document.getElementById('fin-total-remaining').innerText = remainingTotal.toLocaleString() + " د.ع";
+            }
         };
+
+        const savedPin = localStorage.getItem('amal_saved_pin');
+        if(savedPin) {
+            document.getElementById('secret-pin').value = savedPin;
+            setTimeout(() => { window.verifyAccess(); }, 500);
+        }
     </script>
 </body>
 </html>
