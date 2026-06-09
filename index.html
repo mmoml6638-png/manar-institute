@@ -161,6 +161,23 @@
             padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;
             position: absolute; left: 15px; top: 22px;
         }
+
+        .institute-section {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-color);
+        }
+        .institute-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            background: #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -202,7 +219,7 @@
                         <input type="text" id="st-name" required placeholder="اكتب اسم الطالب هنا">
                     </div>
                     <div class="form-group">
-                        <label>المرحلة الدراسية / الصف المتاحة لحسابك:</label>
+                        <label>المعهد والمرحلة الدراسية المتاحة لحسابك:</label>
                         <select id="st-grade" required></select>
                     </div>
                     <div class="form-group">
@@ -210,7 +227,7 @@
                         <input type="text" id="st-phone" required placeholder="اكتب رقم هاتف ولي الأمر هنا">
                     </div>
                     <div class="form-group">
-                        <label>مبلغ القسط الكلي (د.ع):</label>
+                        <label>مبلغ القسط الكلي لهذا المعهد (د.ع):</label>
                         <input type="text" id="st-total-fee" required placeholder="اكتب مبلغ القسط الكلي هنا" oninput="formatCurrencyInput(this)">
                     </div>
                     <div class="form-group">
@@ -221,19 +238,20 @@
                 </form> 
                 
                 <div class="panel-header-actions" style="margin-top: 25px;">
-                    <h2>قائمة الطلاب المسجلين</h2>
-                    <button class="btn-print" onclick="printIsolatedSection('print-students-area', 'سجل الطلاب والبيانات العامة')">🖨️ طباعة السجل الرسمي</button>
+                    <h2>قائمة الطلاب المسجلين والمالية</h2>
                 </div>
-                <div class="table-responsive" id="print-students-area">
+                <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
                                 <th>الاسم</th>
-                                <th>الصف</th>
+                                <th>المعهد والصف</th>
                                 <th>الهاتف</th>
                                 <th>القسط الكلي</th>
                                 <th>المدفوع</th>
                                 <th>المتبقي</th>
+                                <th class="no-print">إجراءات الإيصال</th>
+                                <th class="no-print">حذف</th>
                             </tr>
                         </thead>
                         <tbody id="students-table-body"></tbody>
@@ -257,8 +275,10 @@
                         <thead>
                             <tr>
                                 <th>اسم الطالب</th>
-                                <th>الصف</th>
+                                <th>المعهد والصف</th>
                                 <th>الحالة المرصودة</th>
+                                <th class="no-print">الرصد</th>
+                                <th class="no-print">إشعار</th>
                             </tr>
                         </thead>
                         <tbody id="attendance-table-body"></tbody>
@@ -270,10 +290,9 @@
             <div id="finance-panel" class="panel">
                 <div class="panel-header-actions">
                     <h2>التقرير المالي العام</h2>
-                    <button class="btn-print" onclick="printIsolatedSection('print-finance-area', 'الموقف المالي العام وإحصائيات الخزينة')">🖨️ طباعة كشف الحسابات</button>
                 </div>
                 
-                <div id="print-finance-area">
+                <div>
                     <div class="stats-grid">
                         <div class="stat-card" style="border-top: 4px solid #2c3e50;">
                             <div style="font-weight: bold; margin-bottom: 5px;">الإيرادات المتوقعة</div>
@@ -293,7 +312,7 @@
                 <h2>تسديد قسط جديد</h2>
                 <form id="payment-form" onsubmit="collectPayment(event)">
                     <div class="form-group">
-                        <label>اختر الطالب:</label>
+                        <label>اختر الطالب والمعهد المراد التسديد له:</label>
                         <select id="pay-student-select" required>
                             <option value="">-- اختر من الطلاب المسجلين --</option>
                         </select>
@@ -315,31 +334,25 @@
                         <input type="text" id="t-name" required placeholder="اكتب اسم الأستاذ هنا">
                     </div>
                     <div class="form-group">
+                        <label>اسم المعهد التابع له هذا المدرس:</label>
+                        <input type="text" id="t-institute" required placeholder="مثال: معهد الأمل، معهد النجاح">
+                    </div>
+                    <div class="form-group">
                         <label>الرمز السري المخصص لتسجيل دخوله:</label>
                         <input type="text" id="t-pin" required placeholder="اكتب الرمز السري هنا">
                     </div>
                     <div class="form-group">
-                        <label>المراحل المتاحة له (اكتب اسم الصف وافصل بين الصفوف بفاصلة ,):</label>
+                        <label>الصفوف التابعة له في هذا المعهد (افصل بين الصفوف بفاصلة ,):</label>
                         <input type="text" id="t-grades" required placeholder="مثال: ابتدائية, متوسطة, اعدادية">
                     </div>
                     <button type="submit" class="btn-submit" style="background: #f39c12;">تأكيد وحفظ الأستاذ سحابياً</button>
                 </form>
 
                 <div class="panel-header-actions" style="margin-top: 25px;">
-                    <h2>قائمة الأساتذة النشطين في المنظومة</h2>
+                    <h2>قائمة الأساتذة النشطين (مفصولة حسب المعهد)</h2>
                 </div>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>اسم الأستاذ</th>
-                                <th>الرمز السري الخاص به</th>
-                                <th>الصفوف التابعة له</th>
-                                <th>إجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="teachers-table-body"></tbody>
-                    </table>
+                <div id="teachers-by-institute-container">
+                    <!-- سيتم توليد جداول المدرسين هنا ديناميكياً حسب المعهد -->
                 </div>
             </div>
 
@@ -365,7 +378,7 @@
         const db = getFirestore(app);
 
         const baseUsers = {
-            "moamel2006": { name: "المصمم العام", role: "admin", grades: ["ابتدائية", "متوسطة", "اعدادية"] }
+            "moamel2006": { name: "المصمم العام", role: "admin", grades: ["معهد الأمل - ابتدائية", "معهد الأمل - متوسطة", "معهد الأمل - اعدادية"] }
         };
         
         let usersDatabase = { ...baseUsers };
@@ -377,6 +390,68 @@
 
         const todayLocal = new Date().toLocaleDateString('en-CA');
         document.getElementById('attendance-date').value = todayLocal;
+
+        // 🖨️ دالة طباعة وصل مالي منفرد ومستقل تماماً لطالب واحد
+        window.printSingleStudentReceipt = function(name, grade, total, paid, remaining) {
+            const printWindow = window.open('', '_blank', 'height=500,width=650');
+            
+            printWindow.document.write(`
+                <html lang="ar" dir="rtl">
+                <head>
+                    <title>وصل استلام مالي - ${name}</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 25px; background: #fff; color: #333; direction: rtl; }
+                        .receipt-card { border: 3px double #2c3e50; padding: 20px; border-radius: 15px; background: #fafafa; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+                        .receipt-header { text-align: center; border-bottom: 2px solid #2c3e50; padding-bottom: 12px; margin-bottom: 20px; }
+                        .receipt-header h1 { margin: 0; font-size: 24px; color: #2c3e50; }
+                        .receipt-header p { margin: 5px 0 0 0; font-size: 13px; color: #666; }
+                        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 15px; padding: 8px 0; border-bottom: 1px dashed #ddd; }
+                        .receipt-row .label { font-weight: bold; color: #4a6b82; }
+                        .receipt-row .value { font-weight: 800; color: #2c3e50; }
+                        .highlight { background-color: #f1f5f9; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; }
+                        .footer-msg { text-align: center; margin-top: 25px; font-size: 12px; color: #777; font-style: italic; }
+                    </style>
+                </head>
+                <body>
+                    <div class="receipt-card">
+                        <div class="receipt-header">
+                            <h1>منظومة أَمَل لإدارة التعليم الذكي</h1>
+                            <p>إيصال مالي رسمي - تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}</p>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="label">اسم الطالب الكامل:</span>
+                            <span class="value" style="font-size: 16px;">${name}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="label">المعهد والمرحلة:</span>
+                            <span class="value">${grade}</span>
+                        </div>
+                        <div class="receipt-row highlight">
+                            <span class="label">مبلغ القسط الكلي:</span>
+                            <span class="value">${Number(total).toLocaleString()} د.ع</span>
+                        </div>
+                        <div class="receipt-row highlight" style="border-color: #2ecc71;">
+                            <span class="label" style="color: #27ae60;">المبلغ الواصل (المستلم):</span>
+                            <span class="value" style="color: #27ae60;">${Number(paid).toLocaleString()} د.ع</span>
+                        </div>
+                        <div class="receipt-row highlight" style="border-color: #e74c3c;">
+                            <span class="label" style="color: #c0392b;">المبلغ المتبقي (الدين):</span>
+                            <span class="value" style="color: #c0392b;">${Number(remaining).toLocaleString()} د.ع</span>
+                        </div>
+                        <p class="footer-msg">تُحفظ هذه النسخة كإثبات مالي رسمي للطالب. شكراً لثقتكم بنا.</p>
+                    </div>
+                </body>
+                </html>
+            `);
+
+            printWindow.document.close();
+            printWindow.focus();
+            
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        };
 
         window.printIsolatedSection = function(elementId, reportTitle) {
             const printElement = document.getElementById(elementId);
@@ -396,10 +471,7 @@
                         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
                         th, td { border: 1px solid #000; padding: 10px 8px; text-align: right; font-size: 13px; }
                         th { background-color: #f2f2f2 !important; font-weight: bold; }
-                        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-                        .stat-card { border: 1px solid #000; padding: 15px; text-align: center; border-radius: 6px; background: #fafafa; }
-                        .stat-number { font-size: 18px; font-weight: bold; margin-top: 5px; }
-                        .no-print, button, form { display: none !important; }
+                        .no-print, button, form, .no-print { display: none !important; }
                     </style>
                 </head>
                 <body>
@@ -442,12 +514,17 @@
             if (!gradeSelect) return;
             gradeSelect.innerHTML = '';
             
-            const targetGrades = currentUserRole === "admin" ? ["ابتدائية", "متوسطة", "اعدادية"] : currentUserGrades;
+            let targetGrades = [];
+            if (currentUserRole === "admin") {
+                targetGrades = allAvailableGrades.length > 0 ? allAvailableGrades : ["معهد الأمل - ابتدائية", "معهد الأمل - متوسطة", "معهد الأمل - اعدادية"];
+            } else {
+                targetGrades = currentUserGrades;
+            }
 
             if(targetGrades.length === 0) {
                 let opt = document.createElement('option');
                 opt.value = "";
-                opt.innerText = "لا توجد مراحل مخصصة لحسابك";
+                opt.innerText = "لا توجد معاهد أو مراحل مخصصة لحسابك";
                 gradeSelect.appendChild(opt);
                 return;
             }
@@ -487,8 +564,6 @@
                 }
 
                 setupGradeDropdown(); 
-                
-                // تمرير حدث وهمي لتفادي توقف الدالة بالمتصفحات الحديثة
                 switchTab(null, 'students-panel');
                 window.initFirebaseSync();
             } else {
@@ -515,7 +590,6 @@
             if(event && event.currentTarget) {
                 event.currentTarget.classList.add('active');
             } else {
-                // تفعيل التبويب الأول برمجياً إذا لم يكن هناك حدث حقيقي للمستخدم
                 const firstTab = document.querySelector('.tab-btn');
                 if(firstTab) firstTab.classList.add('active');
             }
@@ -534,19 +608,27 @@
         onSnapshot(collection(db, "teachers"), (snapshot) => {
             usersDatabase = { ...baseUsers }; 
             let collectedGrades = [];
-            const tBody = document.getElementById('teachers-table-body');
-            if (tBody) tBody.innerHTML = '';
+            const container = document.getElementById('teachers-by-institute-container');
+            if (container) container.innerHTML = '';
+
+            // كائن لتجميع المدرسين حسب اسم المعهد
+            let institutesMap = {};
 
             snapshot.forEach((docSnap) => {
                 const tData = docSnap.data();
                 const cleanPin = tData.pin.trim().toLowerCase();
+                const instName = tData.institute ? tData.institute.trim() : "معهد غير محدد";
 
                 let individualGrades = [];
                 if (Array.isArray(tData.grades)) {
                     tData.grades.forEach(g => {
                         g.split(',').map(item => item.trim()).forEach(subItem => {
-                            if (subItem && !individualGrades.includes(subItem)) {
-                                individualGrades.push(subItem);
+                            if (subItem) {
+                                // دمج اسم المعهد مع الصف لمنع أي تداخل
+                                const fullGradeName = `${instName} - ${subItem}`;
+                                if (!individualGrades.includes(fullGradeName)) {
+                                    individualGrades.push(fullGradeName);
+                                }
                             }
                         });
                     });
@@ -562,17 +644,60 @@
                     if(!collectedGrades.includes(g)) collectedGrades.push(g);
                 });
 
-                if (tBody) {
-                    tBody.innerHTML += `<tr>
-                        <td><strong>${tData.name}</strong></td>
-                        <td><span style="font-family:monospace; font-weight:bold; color:#f39c12;">${tData.pin}</span></td>
-                        <td>${individualGrades.join(' ، ')}</td>
-                        <td><button class="btn-action btn-del" onclick="deleteTeacher('${docSnap.id}')">حذف الأستاذ</button></td>
-                    </tr>`;
+                // تجميع المدرسين في كائن المعاهد لترتيب العرض لقسم الآدمن
+                if (!institutesMap[instName]) {
+                    institutesMap[instName] = [];
                 }
+                institutesMap[instName].push({
+                    id: docSnap.id,
+                    name: tData.name,
+                    pin: tData.pin,
+                    gradesDisplay: tData.grades.join(' ، ')
+                });
             });
             
             allAvailableGrades = collectedGrades;
+
+            // بناء جداول المدرسين المنفصلة حسب كل معهد
+            if (container) {
+                for (const institute in institutesMap) {
+                    let section = document.createElement('div');
+                    section.className = 'institute-section';
+                    
+                    let title = document.createElement('div');
+                    title.className = 'institute-title';
+                    title.innerText = `🏫 أساتذة: ${institute}`;
+                    section.appendChild(title);
+
+                    let tableResp = document.createElement('div');
+                    tableResp.className = 'table-responsive';
+
+                    let tableHtml = `<table>
+                        <thead>
+                            <tr>
+                                <th>اسم الأستاذ</th>
+                                <th>الرمز السري</th>
+                                <th>الصفوف التابعة له</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                    institutesMap[institute].forEach(teacher => {
+                        tableHtml += `<tr>
+                            <td><strong>${teacher.name}</strong></td>
+                            <td><span style="font-family:monospace; font-weight:bold; color:#f39c12;">${teacher.pin}</span></td>
+                            <td>${teacher.gradesDisplay}</td>
+                            <td><button class="btn-action btn-del" onclick="deleteTeacher('${teacher.id}')">حذف الأستاذ</button></td>
+                        </tr>`;
+                    });
+
+                    tableHtml += `</tbody></table>`;
+                    tableResp.innerHTML = tableHtml;
+                    section.appendChild(tableResp);
+                    container.appendChild(section);
+                }
+            }
 
             if(currentUserRole !== "guest") {
                 const savedPin = localStorage.getItem('amal_saved_pin');
@@ -588,6 +713,7 @@
             e.preventDefault();
             const name = document.getElementById('t-name').value.trim();
             const pin = document.getElementById('t-pin').value.trim();
+            const institute = document.getElementById('t-institute').value.trim();
             const gradesRaw = document.getElementById('t-grades').value;
             const gradesArray = gradesRaw.split(',').map(g => g.trim()).filter(g => g !== '');
 
@@ -596,10 +722,11 @@
                 await addDoc(collection(db, "teachers"), {
                     name: name,
                     pin: pin,
+                    institute: institute,
                     grades: gradesArray
                 });
                 document.getElementById('teacher-form').reset();
-                alert("تم حفظ الأستاذ الجديد وتفعيل حسابه فوراً بالصفوف المخصصة!");
+                alert("تم حفظ الأستاذ الجديد وتصنيفه تحت معهده الخاص بنجاح!");
             } catch(err) {
                 alert("خطأ في الحفظ: " + err.message);
             } finally {
@@ -636,7 +763,7 @@
             const chosenGrade = document.getElementById('st-grade').value;
             
             if(!chosenGrade) {
-                alert("خطأ: يرجى تحديد الصف أو المرحلة الدراسية المتاحة!");
+                alert("خطأ: يرجى تحديد المعهد والصف المتاح!");
                 return;
             }
 
@@ -650,7 +777,7 @@
                     paidFee: getCleanNumber(document.getElementById('st-paid-fee').value)
                 });
                 document.getElementById('student-form').reset();
-                alert("تم حفظ بيانات الطالب سحابياً بنجاح تحت المرحلة المختارة!");
+                alert("تم حفظ بيانات الطالب سحابياً بنجاح تحت المعهد المحدد!");
             } catch (error) {
                 alert("خطأ: " + error.message);
             } finally {
@@ -682,8 +809,8 @@
             if (formattedPhone.startsWith('0')) formattedPhone = '964' + formattedPhone.substring(1);
 
             let message = status === "حاضر" 
-                ? `تحية طيبة من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المحاضرة المقررة لتاريخ ${selectedDate}.`
-                : `تنبيه هام من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرة لتاريخ ${selectedDate}.`;
+                ? `تحية طيبة من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم في (${student.grade}) المقررة لتاريخ ${selectedDate}.`
+                : `تنبيه هام من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور درس (${student.grade}) لتاريخ ${selectedDate}.`;
 
             window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank');
         };
@@ -696,7 +823,7 @@
             
             if(student) {
                 const newPaid = student.paidFee + amount;
-                if(newPaid > student.totalFee) { alert("المبلغ يتجاوز القسط الكلي!"); return; }
+                if(newPaid > student.totalFee) { alert("المبلغ يتجاوز القسط الكلي لهذا المعهد!"); return; }
                 try {
                     document.getElementById('loading').style.display = 'flex';
                     await updateDoc(doc(db, "students", studentId), { paidFee: newPaid });
@@ -736,11 +863,16 @@
                 if(tableBody) {
                     tableBody.innerHTML += `<tr>
                         <td><strong>${student.name}</strong></td>
-                        <td>${student.grade}</td>
+                        <td><span style="color:#2c3e50; font-weight:600;">${student.grade}</span></td>
                         <td><span style="font-family:monospace;">${student.phone}</span></td>
                         <td>${sTotalFee.toLocaleString()} د.ع</td>
                         <td>${sPaidFee.toLocaleString()} د.ع</td>
                         <td style="color: ${remaining > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">${remaining.toLocaleString()} د.ع</td>
+                        <td class="no-print">
+                            <button class="btn-action" style="background-color: #e67e22; color:white;" onclick="printSingleStudentReceipt('${student.name}', '${student.grade}', ${sTotalFee}, ${sPaidFee}, ${remaining})">
+                                🖨️ طباعة وصل مالي
+                            </button>
+                        </td>
                         <td class="no-print"><button class="btn-action btn-del" onclick="deleteStudent('${student.id}')">حذف</button></td>
                     </tr>`;
                 }
