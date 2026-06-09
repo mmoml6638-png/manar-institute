@@ -381,7 +381,7 @@
         const db = getFirestore(app);
 
         const baseUsers = {
-            "moamel2006": { name: "المصمم العام", role: "admin", grades: [], institute: "كل المعاهد" }
+            "moamel2006": { name: "المصمم العام", role: "admin", grades: ["ابتدائية", "متوسطة", "اعدادية"], institute: "كل المعاهد" }
         };
         
         let usersDatabase = { ...baseUsers };
@@ -427,6 +427,7 @@
 
         window.verifyAccess = function() {
             const pin = document.getElementById('secret-pin').value.trim().toLowerCase();
+            
             if (usersDatabase[pin]) {
                 const user = usersDatabase[pin];
                 currentUserRole = user.role;
@@ -478,16 +479,6 @@
             currentUserName = "";
         };
 
-        window.switchTab = function(panelId) {
-            document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(panelId).classList.add('active');
-            if(event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
-            }
-            document.getElementById('receipt-actions-container').style.display = 'none';
-        };
-
         window.initFirebaseSync = function() {
             onSnapshot(collection(db, "students_v2"), (snapshot) => {
                 localStudents = [];
@@ -536,14 +527,14 @@
                 }
             });
             
-            if(currentUserRole !== "guest") {
-                const savedPin = localStorage.getItem('amal_saved_pin');
-                if (savedPin && usersDatabase[savedPin.trim().toLowerCase()]) {
-                    currentUserGrades = usersDatabase[savedPin.trim().toLowerCase()].grades;
-                    currentUserInstitute = usersDatabase[savedPin.trim().toLowerCase()].institute;
-                    currentUserName = usersDatabase[savedPin.trim().toLowerCase()].name;
+            const currentSavedPin = localStorage.getItem('amal_saved_pin');
+            if (currentSavedPin && currentUserRole !== "guest") {
+                const pinClean = currentSavedPin.trim().toLowerCase();
+                if (usersDatabase[pinClean]) {
+                    currentUserGrades = usersDatabase[pinClean].grades;
+                    currentUserInstitute = usersDatabase[pinClean].institute;
+                    currentUserName = usersDatabase[pinClean].name;
                 }
-                setupGradeDropdown();
                 renderAll();
             }
         });
@@ -704,7 +695,7 @@
                             <span class="value">${lastPaymentDetails.studentName}</span>
                         </div>
                         <div class="receipt-row">
-                            <span class="label">المعهد المكتوب:</span>
+                            <span class="label">المعهد المكتب:</span>
                             <span class="value">${lastPaymentDetails.institute}</span>
                         </div>
                         <div class="receipt-row">
@@ -841,15 +832,22 @@
         window.addEventListener('DOMContentLoaded', () => {
             const savedPin = localStorage.getItem('amal_saved_pin');
             if (savedPin) {
-                setTimeout(() => {
-                    const cleanSavedPin = savedPin.trim().toLowerCase();
-                    if (usersDatabase[cleanSavedPin]) {
-                        document.getElementById('secret-pin').value = cleanSavedPin;
-                        verifyAccess();
-                    }
-                }, 600);
+                const cleanSavedPin = savedPin.trim().toLowerCase();
+                if (usersDatabase[cleanSavedPin]) {
+                    document.getElementById('secret-pin').value = cleanSavedPin;
+                    verifyAccess();
+                }
             }
         });
+        window.switchTab = function(panelId) {
+            document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            if(event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+            document.getElementById('receipt-actions-container').style.display = 'none';
+        };
     </script>
 </body>
 </html>
