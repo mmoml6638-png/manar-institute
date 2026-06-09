@@ -69,11 +69,6 @@
         .teacher-badge-header {
             background-color: var(--primary-color); color: #fff; 
             padding: 6px 16px; border-radius: 20px; display: inline-block; 
-            font-size: 13px; margin-top: 10px; font-weight: bold; margin-left: 5px;
-        }
-        .institute-badge-header {
-            background-color: #e67e22; color: #fff; 
-            padding: 6px 16px; border-radius: 20px; display: inline-block; 
             font-size: 13px; margin-top: 10px; font-weight: bold;
         }
 
@@ -156,17 +151,6 @@
             padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;
             position: absolute; left: 15px; top: 22px;
         }
-
-        .receipt-action-box {
-            background: #f8fafc; border: 2px dashed #cbd5e1; padding: 20px 15px;
-            border-radius: 16px; margin-top: 20px; text-align: center; display: none;
-        }
-        .receipt-btns-flex {
-            display: flex; flex-direction: column; gap: 10px; margin-top: 15px; justify-content: center;
-        }
-        @media(min-width: 500px) {
-            .receipt-btns-flex { flex-direction: row; gap: 15px; }
-        }
     </style>
 </head>
 <body>
@@ -189,7 +173,6 @@
             <h1>أمل</h1>
             <p id="user-welcome-msg" style="margin: 5px 0 0 0; color: #555; font-size: 13px;">منظومة إدارة التعليم الذكي الموحدة</p>
             <div id="teacher-tag" class="teacher-badge-header" style="display: none;"></div>
-            <div id="institute-tag" class="institute-badge-header" style="display: none;"></div>
         </div>
 
         <div class="container">
@@ -197,51 +180,44 @@
                 <button class="tab-btn active" onclick="switchTab('students-panel')">إدارة الطلاب</button>
                 <button class="tab-btn" onclick="switchTab('attendance-panel')">الغياب والواتساب</button>
                 <button class="tab-btn" onclick="switchTab('finance-panel')">الخزينة والحسابات</button>
-                <button class="tab-btn" id="teachers-tab" style="display: none; background-color: #f39c12; color: white;" onclick="switchTab('teachers-panel')">إدارة الأساتذة والمعاهد ⚙️</button>
+                <button class="tab-btn" id="teachers-tab" style="display: none; background-color: #f39c12; color: white;" onclick="switchTab('teachers-panel')">إدارة الأساتذة ⚙️</button>
             </div>
 
-            <!-- 1. لوحة إدارة الطلاب -->
             <div id="students-panel" class="panel active">
-                <h2 id="form-panel-title">تسجيل طالب جديد</h2>
+                <h2>تسجيل طالب جديد في التطبيق</h2>
                 <form id="student-form" onsubmit="addStudent(event)">
                     <div class="form-group">
                         <label>اسم الطالب الكامل:</label>
                         <input type="text" id="st-name" required placeholder="اكتب اسم الطالب هنا">
                     </div>
                     <div class="form-group">
-                        <label>المرحلة الدراسية / الصف:</label>
+                        <label>المرحلة الدراسية / الصف المتاحة لحسابك:</label>
                         <select id="st-grade" required></select>
-                    </div>
-                    <div class="form-group" id="admin-institute-group" style="display: none;">
-                        <label>اكتب اسم المعهد والمادة (للآدمن فقط):</label>
-                        <input type="text" id="st-institute" placeholder="مثال: معهد المنصور - فيزياء">
                     </div>
                     <div class="form-group">
                         <label>رقم هاتف ولي الأمر (واتساب):</label>
                         <input type="text" id="st-phone" required placeholder="اكتب رقم هاتف ولي الأمر هنا">
                     </div>
                     <div class="form-group">
-                        <label>مبلغ القسط المخصص لمادتك (د.ع):</label>
-                        <input type="text" id="st-total-fee" required placeholder="مبلغ القسط لهذه المادة" oninput="formatCurrencyInput(this)">
+                        <label>مبلغ القسط الكلي (د.ع):</label>
+                        <input type="text" id="st-total-fee" required placeholder="اكتب مبلغ القسط الكلي هنا" oninput="formatCurrencyInput(this)">
                     </div>
                     <div class="form-group">
-                        <label>المبلغ المدفوع مقدمًا للمادة (د.ع):</label>
+                        <label>المبلغ المدفوع مقدماً (د.ع):</label>
                         <input type="text" id="st-paid-fee" value="0" required oninput="formatCurrencyInput(this)">
                     </div>
                     <button type="submit" class="btn-submit">حفظ بيانات الطالب سحابياً</button>
                 </form> 
                 
-                <h2 style="margin-top: 25px;">قائمة الطلاب المسجلين بمادتك ومعهدك</h2>
+                <h2 style="margin-top: 25px;">قائمة الطلاب المسجلين</h2>
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
                                 <th>الاسم</th>
                                 <th>الصف</th>
-                                <th>المعهد المكتوب</th>
-                                <th>الأستاذ</th>
                                 <th>الهاتف</th>
-                                <th>القسط المقرر</th>
+                                <th>القسط الكلي</th>
                                 <th>المدفوع</th>
                                 <th>المتبقي</th>
                                 <th>إجراءات</th>
@@ -252,21 +228,19 @@
                 </div>
             </div>
 
-            <!-- 2. لوحة الغياب والتحضير -->
             <div id="attendance-panel" class="panel">
                 <div class="date-picker-box">
                     <label style="color: var(--primary-color); font-size: 14px; margin-bottom:8px;">اختر تاريخ اليوم المراد رصده:</label>
                     <input type="date" id="attendance-date" style="max-width: 100%; font-weight: bold;" onchange="loadAttendanceForDate()">
                 </div>
 
-                <h2>رصد الحضور وإشعارات أولياء الأمور</h2>
+                <h2 id="attendance-title">رصد الحضور وإشعارات أولياء الأمور</h2>
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
                                 <th>اسم الطالب</th>
                                 <th>الصف</th>
-                                <th>المعهد والمادة</th>
                                 <th>الحالة</th>
                                 <th>رصد الحالة</th>
                                 <th>إشعار فوري</th>
@@ -277,9 +251,8 @@
                 </div>
             </div>
 
-            <!-- 3. لوحة الحسابات والمالية -->
             <div id="finance-panel" class="panel">
-                <h2 id="finance-panel-title">التقرير المالي العام</h2>
+                <h2>التقرير المالي العام</h2>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div>الإيرادات المتوقعة</div>
@@ -305,51 +278,37 @@
                     </div>
                     <div class="form-group">
                         <label>المبلغ المراد تسديده الآن (د.ع):</label>
-                        <input type="text" id="pay-amount" required placeholder="اكتب المبلغ هنا" oninput="formatCurrencyInput(this)">
+                        <input type="text" id="pay-amount" required placeholder="اكتب المبلغ المراد تسديده هنا" oninput="formatCurrencyInput(this)">
                     </div>
                     <button type="submit" class="btn-submit">تأكيد وتحديث دفعة الحساب</button>
                 </form>
-
-                <div id="receipt-actions-container" class="receipt-action-box">
-                    <p style="color: var(--primary-color); font-weight: 700; margin: 0; font-size: 15px;">🎉 تم تحديث الحساب المالي بنجاح! اختر طريقة تسليم الوصل لولي الأمر:</p>
-                    <div class="receipt-btns-flex">
-                        <button class="btn-submit" id="print-receipt-btn" style="background: #e67e22; flex: 1;">🖨️ طباعة وصل ورقي فوري</button>
-                        <button class="btn-submit" id="whatsapp-receipt-btn" style="background: var(--whatsapp-color); flex: 1;">💬 إرسال الوصل عبر الواتساب</button>
-                    </div>
-                </div>
             </div>
 
-            <!-- 4. لوحة التحكم بالأساتذة (صلاحية الآدمن) -->
             <div id="teachers-panel" class="panel">
-                <h2>إضافة أستاذ جديد وتحديد معهده الفعلي (كتابة نصية)</h2>
+                <h2>إضافة أستاذ جديد للنظام (صلاحية الآدمن)</h2>
                 <form id="teacher-form" onsubmit="addTeacher(event)">
                     <div class="form-group">
-                        <label>اسم الأستاذ الكامل ومادته:</label>
-                        <input type="text" id="t-name" required placeholder="مثال: أ. محمد علي - فيزياء">
+                        <label>اسم الأستاذ الكامل:</label>
+                        <input type="text" id="t-name" required placeholder="اكتب اسم الأستاذ هنا">
                     </div>
                     <div class="form-group">
                         <label>الرمز السري المخصص لتسجيل دخوله:</label>
                         <input type="text" id="t-pin" required placeholder="اكتب الرمز السري هنا">
                     </div>
                     <div class="form-group">
-                        <label>اسم المعهد / المركز التابع له (اكتبه بيدك):</label>
-                        <input type="text" id="t-institute" required placeholder="مثال: معهد المنصور، معهد زيونة، معهد المتفوقين">
-                    </div>
-                    <div class="form-group">
-                        <label>المراحل المتاحة له في هذا المعهد (اكتب اسم الصف وافصل بـ ,):</label>
+                        <label>المراحل المتاحة له (اكتب اسم الصف وافصل بين الصفوف بفاصلة ,):</label>
                         <input type="text" id="t-grades" required placeholder="مثال: ابتدائية, متوسطة, اعدادية">
                     </div>
                     <button type="submit" class="btn-submit" style="background: #f39c12;">تأكيد وحفظ الأستاذ سحابياً</button>
                 </form>
 
-                <h2 style="margin-top: 25px;">قائمة الأساتذة وتوزيعهم على المعاهد</h2>
+                <h2 style="margin-top: 25px;">قائمة الأساتذة النشطين في المنظومة</h2>
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
-                                <th>اسم الأستاذ والمادة</th>
-                                <th>المعهد الحالي</th>
-                                <th>الرمز السري</th>
+                                <th>اسم الأستاذ</th>
+                                <th>الرمز السري الخاص به</th>
                                 <th>الصفوف التابعة له</th>
                                 <th>إجراءات</th>
                             </tr>
@@ -381,17 +340,15 @@
         const db = getFirestore(app);
 
         const baseUsers = {
-            "moamel2006": { name: "المصمم العام", role: "admin", grades: ["ابتدائية", "متوسطة", "اعدادية"], institute: "كل المعاهد" }
+            "moamel2006": { name: "المصمم العام", role: "admin", grades: [] }
         };
         
         let usersDatabase = { ...baseUsers };
+        let allAvailableGrades = []; 
         let localStudents = [];
         let currentDayAttendance = {}; 
         let currentUserRole = "guest"; 
         let currentUserGrades = [];
-        let currentUserInstitute = "";
-        let currentUserName = "";
-        let lastPaymentDetails = null; 
 
         const todayLocal = new Date().toLocaleDateString('en-CA');
         document.getElementById('attendance-date').value = todayLocal;
@@ -416,7 +373,9 @@
             const gradeSelect = document.getElementById('st-grade');
             if (!gradeSelect) return;
             gradeSelect.innerHTML = '';
+            
             const fixedGrades = ["ابتدائية", "متوسطة", "اعدادية"];
+
             fixedGrades.forEach(grade => {
                 let opt = document.createElement('option');
                 opt.value = grade;
@@ -427,19 +386,10 @@
 
         window.verifyAccess = function() {
             const pin = document.getElementById('secret-pin').value.trim().toLowerCase();
-            
-            let user = null;
-            if (pin === "moamel2006") {
-                user = baseUsers["moamel2006"];
-            } else if (usersDatabase[pin]) {
-                user = usersDatabase[pin];
-            }
-
-            if (user) {
+            if (usersDatabase[pin]) {
+                const user = usersDatabase[pin];
                 currentUserRole = user.role;
                 currentUserGrades = user.grades;
-                currentUserInstitute = user.institute;
-                currentUserName = user.name;
 
                 localStorage.setItem('amal_saved_pin', pin);
 
@@ -449,20 +399,12 @@
                 if (currentUserRole === "admin") {
                     document.getElementById('teachers-tab').style.display = 'block';
                     document.getElementById('teacher-tag').style.display = 'none';
-                    document.getElementById('institute-tag').style.display = 'inline-block';
-                    document.getElementById('admin-institute-group').style.display = 'block';
-                    document.getElementById('institute-tag').innerText = `الإشراف: كل المعاهد والأساتذة`;
                     document.getElementById('user-welcome-msg').innerText = `مرحباً بك في لوحة تحكم تطبيق: ${user.name} 👑`;
-                    document.getElementById('form-panel-title').innerText = "تسجيل طالب جديد في المنظومة (صلاحيات كاملة)";
                 } else {
                     document.getElementById('teachers-tab').style.display = 'none';
                     document.getElementById('teacher-tag').style.display = 'inline-block';
-                    document.getElementById('institute-tag').style.display = 'inline-block';
-                    document.getElementById('admin-institute-group').style.display = 'none';
                     document.getElementById('teacher-tag').innerText = `المدرس: ${user.name}`;
-                    document.getElementById('institute-tag').innerText = `المعهد: ${user.institute}`;
-                    document.getElementById('user-welcome-msg').innerText = `مرحباً بك أستاذ، النظام يعزل حسابات طلابك هنا بشكل تلقائي وآمن.`;
-                    document.getElementById('form-panel-title').innerText = `تسجيل طالب جديد في (${user.institute})`;
+                    document.getElementById('user-welcome-msg').innerText = `مرحباً، لديك كامل الصلاحيات لإدارة طلابك وماليتهم بمرونة.`;
                 }
 
                 setupGradeDropdown(); 
@@ -481,12 +423,19 @@
             document.getElementById('teachers-tab').style.display = 'none';
             currentUserRole = "guest";
             currentUserGrades = [];
-            currentUserInstitute = "";
-            currentUserName = "";
+        };
+
+        window.switchTab = function(panelId) {
+            document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            if(event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
         };
 
         window.initFirebaseSync = function() {
-            onSnapshot(collection(db, "students_v2"), (snapshot) => {
+            onSnapshot(collection(db, "students"), (snapshot) => {
                 localStudents = [];
                 snapshot.forEach((doc) => {
                     localStudents.push({ id: doc.id, ...doc.data() });
@@ -497,6 +446,7 @@
 
         onSnapshot(collection(db, "teachers"), (snapshot) => {
             usersDatabase = { ...baseUsers }; 
+            let collectedGrades = [];
             const tBody = document.getElementById('teachers-table-body');
             if (tBody) tBody.innerHTML = '';
 
@@ -518,29 +468,31 @@
                 usersDatabase[cleanPin] = {
                     name: tData.name,
                     role: "teacher",
-                    grades: individualGrades,
-                    institute: tData.institute || "غير محدد"
+                    grades: individualGrades
                 };
+
+                individualGrades.forEach(g => {
+                    if(!collectedGrades.includes(g)) collectedGrades.push(g);
+                });
 
                 if (tBody) {
                     tBody.innerHTML += `<tr>
                         <td><strong>${tData.name}</strong></td>
-                        <td><span style="background:#e67e22; color:white; padding:3px 8px; border-radius:5px; font-size:12px;">${tData.institute || 'غير محدد'}</span></td>
                         <td><span style="font-family:monospace; font-weight:bold; color:#f39c12;">${tData.pin}</span></td>
                         <td>${individualGrades.join(' ، ')}</td>
-                        <td><button class="btn-action btn-del" onclick="deleteTeacher('${docSnap.id}')">حذف</button></td>
+                        <td><button class="btn-action btn-del" onclick="deleteTeacher('${docSnap.id}')">حذف الأستاذ</button></td>
                     </tr>`;
                 }
             });
             
-            const currentSavedPin = localStorage.getItem('amal_saved_pin');
-            if (currentSavedPin && currentUserRole !== "guest") {
-                const pinClean = currentSavedPin.trim().toLowerCase();
-                if (usersDatabase[pinClean]) {
-                    currentUserGrades = usersDatabase[pinClean].grades;
-                    currentUserInstitute = usersDatabase[pinClean].institute;
-                    currentUserName = usersDatabase[pinClean].name;
+            allAvailableGrades = collectedGrades;
+
+            if(currentUserRole !== "guest") {
+                const savedPin = localStorage.getItem('amal_saved_pin');
+                if (savedPin && usersDatabase[savedPin.trim().toLowerCase()]) {
+                    currentUserGrades = usersDatabase[savedPin.trim().toLowerCase()].grades;
                 }
+                setupGradeDropdown();
                 renderAll();
             }
         });
@@ -549,7 +501,6 @@
             e.preventDefault();
             const name = document.getElementById('t-name').value.trim();
             const pin = document.getElementById('t-pin').value.trim();
-            const inst = document.getElementById('t-institute').value.trim();
             const gradesRaw = document.getElementById('t-grades').value;
             const gradesArray = gradesRaw.split(',').map(g => g.trim()).filter(g => g !== '');
 
@@ -558,11 +509,10 @@
                 await addDoc(collection(db, "teachers"), {
                     name: name,
                     pin: pin,
-                    institute: inst,
                     grades: gradesArray
                 });
                 document.getElementById('teacher-form').reset();
-                alert("تم حفظ الأستاذ وتوثيق معهده المكتوب بنجاح سحابي تام!");
+                alert("تم حفظ الأستاذ الجديد وتفعيل حسابه فوراً بالصفوف المخصصة!");
             } catch(err) {
                 alert("خطأ في الحفظ: " + err.message);
             } finally {
@@ -572,52 +522,65 @@
 
         window.deleteTeacher = async function(id) {
             if(confirm("هل أنت متأكد من حذف هذا الأستاذ؟")) {
-                try { await deleteDoc(doc(db, "teachers", id)); } catch(e) { alert("فشل الحذف"); }
+                try {
+                    await deleteDoc(doc(db, "teachers", id));
+                } catch(e) {
+                    alert("فشل الحذف");
+                }
             }
         };
 
         window.loadAttendanceForDate = async function() {
             const selectedDate = document.getElementById('attendance-date').value;
             if(!selectedDate) return;
+
             try {
-                const dateDocRef = doc(db, "attendance_v2", selectedDate);
+                const dateDocRef = doc(db, "attendance", selectedDate);
                 const dateDocSnap = await getDoc(dateDocRef);
                 currentDayAttendance = dateDocSnap.exists() ? dateDocSnap.data() : {};
                 renderAll();
-            } catch(e) { console.error(e); }
+            } catch(e) {
+                console.error(e);
+            }
         };
         
         window.addStudent = async function(e) {
             e.preventDefault();
             const chosenGrade = document.getElementById('st-grade').value;
             
-            const chosenInst = (currentUserRole === "admin") ? document.getElementById('st-institute').value.trim() : currentUserInstitute;
-            const associatedTeacher = (currentUserRole === "admin") ? "الآدمن العام" : currentUserName;
+            if(!chosenGrade) {
+                alert("خطأ: يرجى تحديد الصف أو المرحلة الدراسية المتاحة!");
+                return;
+            }
 
             try {
                 document.getElementById('loading').style.display = 'flex';
-                await addDoc(collection(db, "students_v2"), {
+                await addDoc(collection(db, "students"), {
                     name: document.getElementById('st-name').value,
                     grade: chosenGrade,
-                    institute: chosenInst,
-                    teacher: associatedTeacher, 
                     phone: document.getElementById('st-phone').value,
                     totalFee: getCleanNumber(document.getElementById('st-total-fee').value),
                     paidFee: getCleanNumber(document.getElementById('st-paid-fee').value)
                 });
                 document.getElementById('student-form').reset();
                 setupGradeDropdown(); 
-                alert("تم تسجيل الطالب بنجاح! حسابه وقسطه مربوط بمادتك وبالمعهد المكتوب بشكل مستقل تماماً.");
-            } catch (error) { alert("خطأ: " + error.message); } finally { document.getElementById('loading').style.display = 'none'; }
+                alert("تم حفظ بيانات الطالب سحابياً بنجاح تحت المرحلة المختارة!");
+            } catch (error) {
+                alert("خطأ: " + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
         };
 
         window.markAttendance = async function(studentId, status) {
             const selectedDate = document.getElementById('attendance-date').value;
             currentDayAttendance[studentId] = status;
             try {
-                await setDoc(doc(db, "attendance_v2", selectedDate), currentDayAttendance);
+                await setDoc(doc(db, "attendance", selectedDate), currentDayAttendance);
                 renderAll();
-            } catch (error) { alert("فشل الحفظ: " + error.message); }
+            } catch (error) {
+                alert("فشل الحفظ: " + error.message);
+            }
         };
 
         window.sendWhatsAppNotice = function(studentId) {
@@ -625,14 +588,16 @@
             const selectedDate = document.getElementById('attendance-date').value;
             const status = currentDayAttendance[studentId] || "غير مرصود بعد";
 
-            if (!student || status === "غير مرصود بعد") { alert("يرجى رصد حالة الطالب أولاً!"); return; }
+            if (!student || status === "غير مرصود بعد") {
+                alert("يرجى رصد حالة الطالب أولاً!"); return;
+            }
 
             let formattedPhone = student.phone.trim();
             if (formattedPhone.startsWith('0')) formattedPhone = '964' + formattedPhone.substring(1);
 
             let message = status === "حاضر" 
-                ? `تحية طيبة من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم محاضرة الأستاذ (${student.teacher}) في (${student.institute}) لتاريخ ${selectedDate}.`
-                : `تنبيه هام من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور محاضرة الأستاذ (${student.teacher}) في (${student.institute}) لتاريخ ${selectedDate}.`;
+                ? `تحية طيبة من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم بأن ولدكم/إبنتكم الطالب ( ${student.name} ) قد حضر اليوم المحاضرة المقررة لتاريخ ${selectedDate}.`
+                : `تنبيه هام من إدارة تطبيق أَمَل التعليمي.\n\nنود إعلامكم غياب ولدكم/إبنتكم الطالب ( ${student.name} ) عن حضور المحاضرة لتاريخ ${selectedDate}.`;
 
             window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank');
         };
@@ -645,121 +610,19 @@
             
             if(student) {
                 const newPaid = student.paidFee + amount;
-                if(newPaid > student.totalFee) { alert("المبلغ يتجاوز القسط المخصص الكلي!"); return; }
+                if(newPaid > student.totalFee) { alert("المبلغ يتجاوز القسط الكلي!"); return; }
                 try {
                     document.getElementById('loading').style.display = 'flex';
-                    await updateDoc(doc(db, "students_v2", studentId), { paidFee: newPaid });
-                    
-                    lastPaymentDetails = {
-                        studentName: student.name,
-                        grade: student.grade,
-                        institute: student.institute || "غير محدد",
-                        teacher: student.teacher || "غير محدد",
-                        phone: student.phone,
-                        paidAmount: amount,
-                        totalFee: student.totalFee,
-                        remaining: student.totalFee - newPaid
-                    };
-
+                    await updateDoc(doc(db, "students", studentId), { paidFee: newPaid });
                     document.getElementById('payment-form').reset();
-                    alert("تم تحديث الدفعة المادية بنجاح تحت حساب المعهد والمدرس المخصص!");
-                    document.getElementById('receipt-actions-container').style.display = 'block';
+                    alert("تم تحديث الدفعة المالية بنجاح!");
                 } catch (error) { alert("فشل حفظ البيانات المادية"); } finally { document.getElementById('loading').style.display = 'none'; }
             }
         };
 
-        document.getElementById('print-receipt-btn').addEventListener('click', () => {
-            if(!lastPaymentDetails) return;
-            const currentDateTime = new Date().toLocaleString('ar-IQ', { hour12: true });
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>وصل استلام قسط - منظومة أمل</title>
-                    <style>
-                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; direction: rtl; text-align: right; padding: 30px; color: #2c3e50; }
-                        .receipt-card { max-width: 500px; margin: 0 auto; border: 2px dashed #2c3e50; padding: 25px; border-radius: 15px; background: #fff; }
-                        .receipt-header { text-align: center; border-bottom: 2px solid #2c3e50; padding-bottom: 15px; margin-bottom: 20px; }
-                        .receipt-header h1 { margin: 0; font-size: 26px; color: #2c3e50; letter-spacing: 1px; }
-                        .receipt-header p { margin: 5px 0 0 0; font-size: 13px; color: #7f8c8d; }
-                        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; border-bottom: 1px dashed #f1f5f9; padding-bottom: 6px; }
-                        .receipt-row span.label { font-weight: bold; color: #34495e; }
-                        .receipt-row span.value { color: #111; font-weight: 600; }
-                        .highlight-box { background: #f8fafc; border-right: 5px solid #2ecc71; padding: 12px; margin: 20px 0; font-size: 18px; text-align: center; font-weight: bold; }
-                        .footer-msg { text-align: center; font-size: 12px; color: #95a5a6; margin-top: 25px; border-top: 1px solid #eee; padding-top: 10px; }
-                        @media print { body { padding: 0; } .receipt-card { border: 2px dashed #000; max-width: 100%; box-shadow: none; } }
-                    </style>
-                </head>
-                <body>
-                    <div class="receipt-card">
-                        <div class="receipt-header">
-                            <h1>منظومة أَمَل التعليمية</h1>
-                            <p>وصل استلام دفعة مالية رسمي وموثق سحابياً</p>
-                        </div>
-                        <div class="receipt-row">
-                            <span class="label">اسم الطالب الكامل:</span>
-                            <span class="value">${lastPaymentDetails.studentName}</span>
-                        </div>
-                        <div class="receipt-row">
-                            <span class="label">المعهد المكتب:</span>
-                            <span class="value">${lastPaymentDetails.institute}</span>
-                        </div>
-                        <div class="receipt-row">
-                            <span class="label">الأستاذ / المادة:</span>
-                            <span class="value">${lastPaymentDetails.teacher}</span>
-                        </div>
-                        <div class="receipt-row">
-                            <span class="label">المرحلة الدراسية:</span>
-                            <span class="value">${lastPaymentDetails.grade}</span>
-                        </div>
-                        <div class="receipt-row">
-                            <span class="label">تاريخ ووقت الدفع:</span>
-                            <span class="value">${currentDateTime}</span>
-                        </div>
-                        <div class="receipt-row">
-                            <span class="label">القسط الكلي المقرر للمادة:</span>
-                            <span class="value">${lastPaymentDetails.totalFee.toLocaleString()} د.ع</span>
-                        </div>
-                        <div class="highlight-box">المبلغ المستلم الحالي: ${lastPaymentDetails.paidAmount.toLocaleString()} د.ع</div>
-                        <div class="receipt-row" style="border: none; margin-top: 15px;">
-                            <span class="label" style="color: #e74c3c;">المبلغ المتبقي بذمته للمادة:</span>
-                            <span class="value" style="color: #e74c3c; font-size: 16px; font-weight: bold;">${lastPaymentDetails.remaining.toLocaleString()} د.ع</span>
-                        </div>
-                        <div class="footer-msg">شكرًا لكم.. تم حفظ وتحديث الحساب المالي بنجاح في قاعدة البيانات.</div>
-                    </div>
-                    <script>window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 500); }</script>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            document.getElementById('receipt-actions-container').style.display = 'none';
-        });
-
-        document.getElementById('whatsapp-receipt-btn').addEventListener('click', () => {
-            if(!lastPaymentDetails) return;
-            let formattedPhone = lastPaymentDetails.phone.trim();
-            if (formattedPhone.startsWith('0')) formattedPhone = '964' + formattedPhone.substring(1);
-
-            const msg = `🧾 *وصل استلام دفعة مالية - منظومة أَمَل التعليمية* 🧾\n\n` +
-                        `نود إعلامكم باستلام مبلغ مالي وتحديث الحساب المالي لـ الطالب:\n` +
-                        `👤 *الاسم:* ${lastPaymentDetails.studentName}\n` +
-                        `🏢 *المعهد:* ${lastPaymentDetails.institute}\n` +
-                        `👨‍🏫 *الأستاذ/المادة:* ${lastPaymentDetails.teacher}\n` +
-                        `🏫 *المرحلة:* ${lastPaymentDetails.grade}\n` +
-                        `-----------------------------\n` +
-                        `💰 *المبلغ المستلم الحالي:* ${lastPaymentDetails.paidAmount.toLocaleString()} د.ع\n` +
-                        `🛑 *المبلغ المتبقي بذمته للمادة:* ${lastPaymentDetails.remaining.toLocaleString()} د.ع\n` +
-                        `📊 *قسط المادة الإجمالي:* ${lastPaymentDetails.totalFee.toLocaleString()} د.ع\n` +
-                        `-----------------------------\n` +
-                        `✨ _تم توثيق وفصل الحسابات سحابياً بنجاح. شكراً لكم._`;
-
-            window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(msg)}`, '_blank');
-            document.getElementById('receipt-actions-container').style.display = 'none';
-        });
-
         window.deleteStudent = async function(id) {
-            if(confirm("هل أنت متأكد من حذف هذا القيد الدراسي نهائياً؟")) {
-                try { await deleteDoc(doc(db, "students_v2", id)); } catch (e) { alert("فشل الحذف"); }
+            if(confirm("هل أنت متأكد من حذف الطالب نهائياً؟")) {
+                try { await deleteDoc(doc(db, "students", id)); } catch (e) { alert("فشل الحذف"); }
             }
         };
 
@@ -775,13 +638,7 @@
             let totalExpected = 0, totalCollected = 0;
 
             localStudents.forEach(student => {
-                const sInstitute = student.institute || "غير محدد";
-                const sTeacher = student.teacher || "غير محدد";
-                
-                if (currentUserRole !== "admin") {
-                    if (currentUserInstitute !== sInstitute || currentUserName !== sTeacher) return; 
-                    if (!currentUserGrades || !currentUserGrades.includes(student.grade)) return;
-                }
+                if (currentUserRole !== "admin" && (!currentUserGrades || !currentUserGrades.includes(student.grade))) return;
 
                 const sTotalFee = getCleanNumber(student.totalFee);
                 const sPaidFee = getCleanNumber(student.paidFee);
@@ -794,14 +651,16 @@
                     tableBody.innerHTML += `<tr>
                         <td><strong>${student.name}</strong></td>
                         <td>${student.grade}</td>
-                        <td><span style="background:#e67e22; color:white; padding:2px 6px; border-radius:4px; font-size:11px;">${sInstitute}</span></td>
-                        <td><span style="background:#2c3e50; color:white; padding:2px 6px; border-radius:4px; font-size:11px;">${sTeacher}</span></td>
                         <td><span style="font-family:monospace;">${student.phone}</span></td>
                         <td>${sTotalFee.toLocaleString()} د.ع</td>
                         <td>${sPaidFee.toLocaleString()} د.ع</td>
                         <td style="color: ${remaining > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">${remaining.toLocaleString()} د.ع</td>
                         <td><button class="btn-action btn-del" onclick="deleteStudent('${student.id}')">حذف</button></td>
                     </tr>`;
+                }
+
+                if(selectMenu) {
+                    selectMenu.innerHTML += `<option value="${student.id}">${student.name} [${student.grade}]</option>`;
                 }
 
                 const currentStatus = currentDayAttendance[student.id] || "غير مرصود بعد";
@@ -811,52 +670,21 @@
                     attendBody.innerHTML += `<tr>
                         <td><strong>${student.name}</strong></td>
                         <td>${student.grade}</td>
-                        <td><span style="color:#7f8c8d; font-size:11px;">${sInstitute} (${sTeacher})</span></td>
                         <td><span class="status-badge ${badgeClass}">${currentStatus}</span></td>
                         <td>
                             <button class="btn-action btn-p" onclick="markAttendance('${student.id}', 'حاضر')">حاضر</button>
                             <button class="btn-action btn-a" onclick="markAttendance('${student.id}', 'غائب')">غائب</button>
                         </td>
-                        <td><button class="btn-action btn-wa" onclick="sendWhatsAppNotice('${student.id}')">💬 واتساب</button></td>
+                        <td>
+                            <button class="btn-action btn-wa" onclick="sendWhatsAppNotice('${student.id}')">إرسال واتساب 📱</button>
+                        </td>
                     </tr>`;
                 }
-
-                if(selectMenu) selectMenu.innerHTML += `<option value="${student.id}">${student.name} [المتبقي له: ${remaining.toLocaleString()} د.ع - ${sInstitute}]</option>`;
             });
-
-            if(currentUserRole === "admin") {
-                document.getElementById('finance-panel-title').innerText = "التقرير المالي الإجمالي لكل المعاهد والأساتذة";
-            } else {
-                document.getElementById('finance-panel-title').innerText = `التقرير المالي لمادتك في (${currentUserInstitute})`;
-            }
 
             if(document.getElementById('fin-total-expected')) document.getElementById('fin-total-expected').innerText = totalExpected.toLocaleString() + " د.ع";
             if(document.getElementById('fin-total-collected')) document.getElementById('fin-total-collected').innerText = totalCollected.toLocaleString() + " د.ع";
             if(document.getElementById('fin-total-remaining')) document.getElementById('fin-total-remaining').innerText = (totalExpected - totalCollected).toLocaleString() + " د.ع";
-        };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedPin = localStorage.getItem('amal_saved_pin');
-            if (savedPin) {
-                const cleanSavedPin = savedPin.trim().toLowerCase();
-                if (cleanSavedPin === "moamel2006") {
-                    document.getElementById('secret-pin').value = cleanSavedPin;
-                    verifyAccess();
-                } else if (usersDatabase[cleanSavedPin]) {
-                    document.getElementById('secret-pin').value = cleanSavedPin;
-                    verifyAccess();
-                }
-            }
-        });
-
-        window.switchTab = function(panelId) {
-            document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(panelId).classList.add('active');
-            if(event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
-            }
-            document.getElementById('receipt-actions-container').style.display = 'none';
         };
     </script>
 </body>
