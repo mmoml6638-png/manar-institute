@@ -21,6 +21,7 @@
             --whatsapp-color: #25D366;
             --light-bg: #f5f7fa;
             --dark-text: #2c3e50;
+            --amal-gradient: linear-gradient(135deg, #bfe3ed 0%, #ecdcd1(100%));
             --amal-gradient: linear-gradient(135deg, #bfe3ed 0%, #ecdcd1 100%);
         }
 
@@ -428,8 +429,14 @@
         window.verifyAccess = function() {
             const pin = document.getElementById('secret-pin').value.trim().toLowerCase();
             
-            if (usersDatabase[pin]) {
-                const user = usersDatabase[pin];
+            let user = null;
+            if (pin === "moamel2006") {
+                user = baseUsers["moamel2006"];
+            } else if (usersDatabase[pin]) {
+                user = usersDatabase[pin];
+            }
+
+            if (user) {
                 currentUserRole = user.role;
                 currentUserGrades = user.grades;
                 currentUserInstitute = user.institute;
@@ -833,12 +840,16 @@
             const savedPin = localStorage.getItem('amal_saved_pin');
             if (savedPin) {
                 const cleanSavedPin = savedPin.trim().toLowerCase();
-                if (usersDatabase[cleanSavedPin]) {
+                if (cleanSavedPin === "moamel2006") {
+                    document.getElementById('secret-pin').value = cleanSavedPin;
+                    verifyAccess();
+                } else if (usersDatabase[cleanSavedPin]) {
                     document.getElementById('secret-pin').value = cleanSavedPin;
                     verifyAccess();
                 }
             }
         });
+
         window.switchTab = function(panelId) {
             document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
